@@ -1,13 +1,15 @@
 package com.federation.federationdecollectivitesagricoles.controller;
 
+import com.federation.federationdecollectivitesagricoles.dto.CreateMemberPaymentRequest;
 import com.federation.federationdecollectivitesagricoles.dto.CreateMemberRequest;
+import com.federation.federationdecollectivitesagricoles.dto.MemberPaymentResponse;
 import com.federation.federationdecollectivitesagricoles.dto.MemberResponse;
 import com.federation.federationdecollectivitesagricoles.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class MemberController {
@@ -23,6 +25,16 @@ public class MemberController {
         try {
             MemberResponse response = memberService.createMember(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/members/{id}/payments")
+    public ResponseEntity<?> createPayments(@PathVariable Long id, @RequestBody List<CreateMemberPaymentRequest> requests) {
+        try {
+            List<MemberPaymentResponse> payments = memberService.createPayments(id, requests);
+            return ResponseEntity.status(HttpStatus.CREATED).body(payments);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

@@ -17,15 +17,18 @@ public class MemberService {
     private final MembershipRepository membershipRepository;
     private final CollectivityRepository collectivityRepository;
     private final SponsorshipRelationRepository sponsorshipRelationRepository;
+    private final TransactionRepository transactionRepository;
 
     public MemberService(MemberRepository memberRepository,
                          MembershipRepository membershipRepository,
                          CollectivityRepository collectivityRepository,
-                         SponsorshipRelationRepository sponsorshipRelationRepository) {
+                         SponsorshipRelationRepository sponsorshipRelationRepository,
+                         TransactionRepository transactionRepository) {
         this.memberRepository = memberRepository;
         this.membershipRepository = membershipRepository;
         this.collectivityRepository = collectivityRepository;
         this.sponsorshipRelationRepository = sponsorshipRelationRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Transactional
@@ -166,5 +169,4 @@ public class MemberService {
         }
         return responses;
     }
-
 }

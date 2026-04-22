@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,15 +18,21 @@ public class CollectivityService {
     private final MemberRepository memberRepository;
     private final MembershipRepository membershipRepository;
     private final MandateRepository mandateRepository;
+    private final MembershipFeeRepository membershipFeeRepository;
+    private final TransactionRepository transactionRepository;
 
     public CollectivityService(CollectivityRepository collectivityRepository,
                                MemberRepository memberRepository,
                                MembershipRepository membershipRepository,
-                               MandateRepository mandateRepository) {
+                               MandateRepository mandateRepository,
+                               MembershipFeeRepository membershipFeeRepository,
+                               TransactionRepository transactionRepository) {
         this.collectivityRepository = collectivityRepository;
         this.memberRepository = memberRepository;
         this.membershipRepository = membershipRepository;
         this.mandateRepository = mandateRepository;
+        this.membershipFeeRepository = membershipFeeRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Transactional
@@ -246,10 +253,13 @@ public class CollectivityService {
             response.setCreationDate(t.getCreationDate());
             response.setAmount(t.getAmount());
             response.setPaymentMode(t.getPaymentMode());
-            response.setMemberDebited(member);
+            if (member != null) {
+                response.setMemberId(String.valueOf(member.getId()));
+                response.setMemberFirstName(member.getFirstName());
+                response.setMemberLastName(member.getLastName());
+            }
             responses.add(response);
         }
         return responses;
     }
-
 }

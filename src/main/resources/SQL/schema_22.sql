@@ -19,7 +19,7 @@ CREATE TABLE collectivity (
                               id SERIAL PRIMARY KEY,
                               number VARCHAR(50) UNIQUE NOT NULL,
                               name VARCHAR(255) UNIQUE NOT NULL,
-                              city VARCHAR(255) NOT NULL,
+                              location VARCHAR(255) NOT NULL,
                               agricultural_specialty VARCHAR(255) NOT NULL,
                               creation_date DATE NOT NULL DEFAULT CURRENT_DATE,
                               authorization_status BOOLEAN NOT NULL DEFAULT FALSE,
@@ -36,7 +36,7 @@ CREATE TABLE member (
                         birth_date DATE NOT NULL,
                         gender gender_type NOT NULL,
                         address TEXT NOT NULL,
-                        occupation VARCHAR(255) NOT NULL,
+                        profession VARCHAR(255) NOT NULL,
                         phone VARCHAR(20) NOT NULL,
                         email VARCHAR(255) UNIQUE NOT NULL
 );
