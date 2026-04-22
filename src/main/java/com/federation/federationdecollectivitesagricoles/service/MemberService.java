@@ -129,4 +129,42 @@ public class MemberService {
 
         return response;
     }
+
+    @Transactional
+    public List<MemberPaymentResponse> createPayments(Long memberId, List<CreateMemberPaymentRequest> requests) {
+        Member member = memberRepository.findById(memberId);
+        if (member == null) {
+            throw new RuntimeException("Member not found");
+        }
+
+        Membership membership = membershipRepository.findMembershipByMemberAndCollectivity(memberId, null);
+        if (membership == null) {
+            throw new RuntimeException("Member not associated with any collectivity");
+        }
+
+        List<MemberPaymentResponse> responses = new ArrayList<>();
+
+        for (CreateMemberPaymentRequest request : requests) {
+            if (request.getAmount() == null || request.getAmount() <= 0) {
+                throw new RuntimeException("Amount must be greater than 0");
+            }
+
+            Transaction transaction = new Transaction();
+            transaction.setCollectivityId(membership.getCollectivityId());
+            transaction.setMemberId(memberId);
+            transaction.setAmount(Double.valueOf(request.getAmount()));
+            transaction.setPaymentMode(request.getPaymentMode());
+            transaction.setCreationDate(LocalDate.now());
+            transaction = transactionRepository.save(transaction);
+
+            MemberPaymentResponse response = new MemberPaymentResponse();
+            response.setId(String.valueOf(transaction.getId()));
+            response.setAmount(request.getAmount());
+            response.setPaymentMode(request.getPaymentMode());
+            response.setCreationDate(transaction.getCreationDate());
+            responses.add(response);
+        }
+        return responses;
+    }
+
 }

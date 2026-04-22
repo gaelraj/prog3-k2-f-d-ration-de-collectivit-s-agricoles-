@@ -174,4 +174,82 @@ public class CollectivityService {
         return response;
     }
 
+    public List<MembershipFeeResponse> getMembershipFees(Long collectivityId) {
+        if (!collectivityRepository.existsById(collectivityId)) {
+            throw new RuntimeException("Collectivity not found");
+        }
+
+        List<MembershipFee> fees = membershipFeeRepository.findByCollectivityId(collectivityId);
+        List<MembershipFeeResponse> responses = new ArrayList<>();
+
+        for (MembershipFee fee : fees) {
+            MembershipFeeResponse response = new MembershipFeeResponse();
+            response.setId(String.valueOf(fee.getId()));
+            response.setEligibleFrom(fee.getEligibleFrom());
+            response.setFrequency(fee.getFrequency());
+            response.setAmount(fee.getAmount());
+            response.setLabel(fee.getLabel());
+            response.setStatus(fee.getStatus());
+            responses.add(response);
+        }
+        return responses;
+    }
+
+    public List<MembershipFeeResponse> createMembershipFees(Long collectivityId, List<CreateMembershipFeeRequest> requests) {
+        if (!collectivityRepository.existsById(collectivityId)) {
+            throw new RuntimeException("Collectivity not found");
+        }
+
+        List<MembershipFeeResponse> responses = new ArrayList<>();
+
+        for (CreateMembershipFeeRequest request : requests) {
+            if (request.getAmount() == null || request.getAmount() <= 0) {
+                throw new RuntimeException("Amount must be greater than 0");
+            }
+            if (request.getFrequency() == null || request.getFrequency().isEmpty()) {
+                throw new RuntimeException("Frequency is required");
+            }
+
+            MembershipFee fee = new MembershipFee();
+            fee.setCollectivityId(collectivityId);
+            fee.setEligibleFrom(request.getEligibleFrom());
+            fee.setFrequency(request.getFrequency());
+            fee.setAmount(request.getAmount());
+            fee.setLabel(request.getLabel());
+            fee.setStatus("ACTIVE");
+            fee = membershipFeeRepository.save(fee);
+
+            MembershipFeeResponse response = new MembershipFeeResponse();
+            response.setId(String.valueOf(fee.getId()));
+            response.setEligibleFrom(fee.getEligibleFrom());
+            response.setFrequency(fee.getFrequency());
+            response.setAmount(fee.getAmount());
+            response.setLabel(fee.getLabel());
+            response.setStatus(fee.getStatus());
+            responses.add(response);
+        }
+        return responses;
+    }
+
+    public List<CollectivityTransactionResponse> getTransactions(Long collectivityId, LocalDate from, LocalDate to) {
+        if (!collectivityRepository.existsById(collectivityId)) {
+            throw new RuntimeException("Collectivity not found");
+        }
+
+        List<Transaction> transactions = transactionRepository.findByCollectivityIdAndDateRange(collectivityId, from, to);
+        List<CollectivityTransactionResponse> responses = new ArrayList<>();
+
+        for (Transaction t : transactions) {
+            Member member = memberRepository.findById(t.getMemberId());
+            CollectivityTransactionResponse response = new CollectivityTransactionResponse();
+            response.setId(String.valueOf(t.getId()));
+            response.setCreationDate(t.getCreationDate());
+            response.setAmount(t.getAmount());
+            response.setPaymentMode(t.getPaymentMode());
+            response.setMemberDebited(member);
+            responses.add(response);
+        }
+        return responses;
+    }
+
 }
