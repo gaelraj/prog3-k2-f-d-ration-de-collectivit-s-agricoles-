@@ -1,727 +1,192 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
-  title: Federation of Agricultural Collectivities API
-  version: 1.1.0
-  description: >
-    OpenAPI specification for the final PROG3 assignment about the digitalization of a
-    federation of agricultural collectivities in Madagascar. This version includes the
-    updated admission procedure (B-2) and federation statistics (H).
+  title: Agricultural federation API
+  description: |
+    # Versioning
+    This API uses semantic versioning (MAJOR.MINOR.PATCH). Available versions are : 
+    - v0.0.1 (2026-04-21) : POST /collectivities for collectivities creation and POST /members for members creation.
+    - v0.0.2 (2026-04-22) : PATCH /collectivities/{id}/identity for collectivity number and name assignment.
+  version: 0.0.2
 
 servers:
-  - url: http://localhost:8080
-    description: Local development server
-
-tags:
-  - name: Collectivities
-  - name: Members
-  - name: Contributions
-  - name: Accounts
-  - name: Activities
-  - name: Attendance
-  - name: Statistics
-  - name: Federation
+  - url: 'https://localhost:8080'
 
 paths:
-  /collectivities:
+  '/collectivities':
     post:
-      tags: [Collectivities]
-      summary: Open a new collectivity
-      description: >
-        Opens a new agricultural collectivity if all required conditions are satisfied:
-        at least 10 members, including at least 5 members with a federation seniority of
-        6 months or more; mandatory specific roles assigned; formal federation authorization;
-        city and agricultural specialty defined.
-      operationId: createCollectivity
+      summary: Create list of collectivities
+      description: |
+        During collectivity request body creation, only members ID are provided to identify members. 
+        But the response content includes members information, not only their IDs.
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCollectivityRequest'
-            examples:
-              default:
-                value:
-                  number: "COL-001"
-                  name: "Collectivité Riz Antsirabe"
-                  city: "Antsirabe"
-                  specialty: "Riziculture"
-                  creationDate: "2026-04-21"
-                  federationAuthorization: true
-                  memberIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                  roleAssignments:
-                    - memberId: 1
-                      role: PRESIDENT
-                    - memberId: 2
-                      role: VICE_PRESIDENT
-                    - memberId: 3
-                      role: TREASURER
-                    - memberId: 4
-                      role: SECRETARY
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateCollectivity'
       responses:
-        '201':
-          description: Collectivity successfully created
+        201:
+          description: List of created collectivities
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollectivityResponse'
-        '400':
-          description: Validation error or business rule violation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Collectivity number or name already exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Collectivity'
+        400:
+          description: Collectivity without federation approval or structure missing.
+        404:
+          description: Member not found.
 
-  /collectivities/{collectivityId}/members:
+  '/members':
     post:
-      tags: [Members]
-      summary: Admit a new member into a collectivity
-      description: >
-        Updated admission workflow (B-2). A candidate must be sponsored by at least two
-        confirmed members of the federation. The number of sponsors coming from the target
-        collectivity must be greater than or equal to the number of sponsors from the rest
-        of the federation. The candidate must provide personal information, the relationship
-        with each sponsor, and pay both the 50,000 MGA admission fee and the full annual
-        contribution required by the target collectivity.
-      operationId: admitMember
-      parameters:
-        - $ref: '#/components/parameters/CollectivityId'
+      summary: Create list of members
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateMemberAdmissionRequest'
-            examples:
-              default:
-                value:
-                  firstName: "Jean"
-                  lastName: "Rakoto"
-                  birthDate: "1998-07-14"
-                  gender: MALE
-                  address: "Antsirabe"
-                  job: "Agriculteur"
-                  phone: "0340000000"
-                  email: "jean.rakoto@example.com"
-                  sponsors:
-                    - sponsorMemberId: 12
-                      relationshipNature: FRIEND
-                    - sponsorMemberId: 18
-                      relationshipNature: COLLEAGUE
-                  payment:
-                    admissionFeeAmount: 50000
-                    annualContributionAmount: 200000
-                    paymentMethod: MOBILE_MONEY
-                    paymentDate: "2026-04-21"
-                    reference: "MVL-001"
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateMember'
       responses:
-        '201':
-          description: Member admitted successfully
+        201:
+          description: List of created members
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MemberResponse'
-        '400':
-          description: Invalid request payload or payment mismatch
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Candidate does not satisfy admission rules
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Email or phone already exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Member'
+        400:
+          description: |
+            The following case must return a bad request exception : 
+            - Member with bad referees or without proper payment.
+            - Membership dues not paid or registration fee not paid.
+        404:
+          description: Either collectivity or member not found.
 
-  /members/{memberId}/collectivity-transfer:
+  '/collectivities/{id}/identity':
     patch:
-      tags: [Members]
-      summary: Transfer a member to another collectivity
-      description: Transfers an active member from the current collectivity to another one.
-      operationId: transferMember
+      summary: Assign number and name to a collectivity
+      description: |
+        Assign a unique number and a unique name to an existing collectivity.
+        Once a number or a name has been assigned, it cannot be changed anymore.
       parameters:
-        - $ref: '#/components/parameters/MemberId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TransferMemberRequest'
-      responses:
-        '200':
-          description: Transfer completed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MembershipResponse'
-        '400':
-          description: Invalid transfer request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Member or target collectivity not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /members/{memberId}/resignation:
-    patch:
-      tags: [Members]
-      summary: Register a member resignation
-      description: Marks the current membership as resigned.
-      operationId: resignMember
-      parameters:
-        - $ref: '#/components/parameters/MemberId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ResignationRequest'
-      responses:
-        '200':
-          description: Resignation registered
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MembershipResponse'
-        '400':
-          description: Invalid resignation request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Member not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /collectivities/{collectivityId}/contributions:
-    post:
-      tags: [Contributions]
-      summary: Record a contribution payment
-      description: >
-        Records a member contribution at the collectivity level. Contributions may be
-        monthly, yearly or exceptional. For each payment, the amount, date and payment
-        method must be stored.
-      operationId: createContribution
-      parameters:
-        - $ref: '#/components/parameters/CollectivityId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateContributionRequest'
-      responses:
-        '201':
-          description: Contribution recorded
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ContributionResponse'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Member or collectivity not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    get:
-      tags: [Contributions]
-      summary: List contributions of a collectivity
-      operationId: listCollectivityContributions
-      parameters:
-        - $ref: '#/components/parameters/CollectivityId'
-        - in: query
-          name: startDate
-          schema:
-            type: string
-            format: date
-        - in: query
-          name: endDate
-          schema:
-            type: string
-            format: date
-        - in: query
-          name: memberId
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Contributions list
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ContributionResponse'
-
-  /collectivities/{collectivityId}/accounts:
-    post:
-      tags: [Accounts]
-      summary: Create an account for a collectivity
-      description: >
-        Creates a cash, bank or mobile money account for a collectivity. A collectivity can
-        have only one cash account, but may have multiple bank accounts and mobile money accounts.
-      operationId: createCollectivityAccount
-      parameters:
-        - $ref: '#/components/parameters/CollectivityId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateAccountRequest'
-      responses:
-        '201':
-          description: Account created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountResponse'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Cash account already exists or unique identifier already used
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    get:
-      tags: [Accounts]
-      summary: List accounts of a collectivity
-      operationId: listCollectivityAccounts
-      parameters:
-        - $ref: '#/components/parameters/CollectivityId'
-      responses:
-        '200':
-          description: Accounts list
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AccountResponse'
-
-  /federation/accounts:
-    post:
-      tags: [Accounts, Federation]
-      summary: Create an account for the federation
-      description: >
-        Creates a cash, bank or mobile money account for the federation. The federation can
-        have only one cash account.
-      operationId: createFederationAccount
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateAccountRequest'
-      responses:
-        '201':
-          description: Federation account created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountResponse'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Cash account already exists or unique identifier already used
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    get:
-      tags: [Accounts, Federation]
-      summary: List federation accounts
-      operationId: listFederationAccounts
-      responses:
-        '200':
-          description: Federation accounts list
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AccountResponse'
-
-  /accounts/{accountId}/balance:
-    get:
-      tags: [Accounts]
-      summary: Get the balance of an account at a given date
-      operationId: getAccountBalanceAtDate
-      parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - in: query
-          name: date
+        - name: id
+          in: path
           required: true
           schema:
             type: string
-            format: date
-      responses:
-        '200':
-          description: Account balance at the requested date
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountBalanceResponse'
-        '404':
-          description: Account not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /collectivities/{collectivityId}/activities:
-    post:
-      tags: [Activities]
-      summary: Create a collectivity activity
-      description: >
-        Creates a mandatory or optional activity for a collectivity. Target audience may be
-        all members, juniors only, or specific members.
-      operationId: createCollectivityActivity
-      parameters:
-        - $ref: '#/components/parameters/CollectivityId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateActivityRequest'
+              $ref: '#/components/schemas/AssignCollectivityIdentity'
       responses:
-        '201':
-          description: Activity created
+        200:
+          description: Collectivity with assigned number and name
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ActivityResponse'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    get:
-      tags: [Activities]
-      summary: List activities of a collectivity
-      operationId: listCollectivityActivities
-      parameters:
-        - $ref: '#/components/parameters/CollectivityId'
-      responses:
-        '200':
-          description: Activities list
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ActivityResponse'
-
-  /federation/activities:
-    post:
-      tags: [Activities, Federation]
-      summary: Create a federation activity
-      description: Creates a federation-wide activity, mandatory or optional.
-      operationId: createFederationActivity
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateActivityRequest'
-      responses:
-        '201':
-          description: Federation activity created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ActivityResponse'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    get:
-      tags: [Activities, Federation]
-      summary: List federation activities
-      operationId: listFederationActivities
-      responses:
-        '200':
-          description: Federation activities list
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ActivityResponse'
-
-  /activities/{activityId}/attendance:
-    post:
-      tags: [Attendance]
-      summary: Record attendance for an activity
-      description: >
-        Records attendance lines for an activity. A member may be marked as present, absent
-        or excused. Members from other collectivities may be recorded as external visitors;
-        their attendance does not count in their own yearly attendance rate.
-      operationId: recordAttendance
-      parameters:
-        - $ref: '#/components/parameters/ActivityId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RecordAttendanceRequest'
-      responses:
-        '201':
-          description: Attendance recorded
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AttendanceResponse'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    get:
-      tags: [Attendance]
-      summary: Get attendance sheet of an activity
-      operationId: getActivityAttendance
-      parameters:
-        - $ref: '#/components/parameters/ActivityId'
-      responses:
-        '200':
-          description: Attendance list
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AttendanceResponse'
-
-  /collectivities/{collectivityId}/statistics:
-    get:
-      tags: [Statistics]
-      summary: Get statistics of a collectivity for a given period
-      description: >
-        Returns detailed collectivity statistics for a given period, including the global
-        attendance rate, active member count, per-member collected amount and potential
-        unpaid amount.
-      operationId: getCollectivityStatistics
-      parameters:
-        - $ref: '#/components/parameters/CollectivityId'
-        - $ref: '#/components/parameters/StartDate'
-        - $ref: '#/components/parameters/EndDate'
-      responses:
-        '200':
-          description: Collectivity statistics
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CollectivityStatisticsResponse'
-        '404':
-          description: Collectivity not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /federation/statistics:
-    get:
-      tags: [Statistics, Federation]
-      summary: Get federation statistics for a given period
-      description: >
-        Returns monthly or yearly federation statistics aggregated from collectivities.
-        The report contains, for each collectivity: global attendance rate, percentage of
-        members up to date with contributions, and number of new members over the given period.
-      operationId: getFederationStatistics
-      parameters:
-        - $ref: '#/components/parameters/StartDate'
-        - $ref: '#/components/parameters/EndDate'
-        - in: query
-          name: granularity
-          required: false
-          schema:
-            type: string
-            enum: [MONTHLY, YEARLY]
-            default: MONTHLY
-      responses:
-        '200':
-          description: Federation statistics report
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FederationStatisticsResponse'
+                $ref: '#/components/schemas/Collectivity'
+        400:
+          description: |
+            The following case must return a bad request exception :
+            - Collectivity number already exists.
+            - Collectivity name already exists.
+            - Collectivity number or name already assigned and cannot be modified.
+        404:
+          description: Collectivity not found.
 
 components:
-  parameters:
-    CollectivityId:
-      in: path
-      name: collectivityId
-      required: true
-      schema:
-        type: integer
-        format: int64
-    MemberId:
-      in: path
-      name: memberId
-      required: true
-      schema:
-        type: integer
-        format: int64
-    AccountId:
-      in: path
-      name: accountId
-      required: true
-      schema:
-        type: integer
-        format: int64
-    ActivityId:
-      in: path
-      name: activityId
-      required: true
-      schema:
-        type: integer
-        format: int64
-    StartDate:
-      in: query
-      name: startDate
-      required: true
-      schema:
-        type: string
-        format: date
-    EndDate:
-      in: query
-      name: endDate
-      required: true
-      schema:
-        type: string
-        format: date
-
   schemas:
-    CreateCollectivityRequest:
+    CreateCollectivity:
       type: object
-      required:
-        - number
-        - name
-        - city
-        - specialty
-        - creationDate
-        - federationAuthorization
-        - memberIds
-        - roleAssignments
+      properties:
+        location:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberIdentifier'
+        federationApproval:
+          type: boolean
+        structure:
+          $ref: '#/components/schemas/CreateCollectivityStructure'
+
+    CreateCollectivityStructure:
+      type: object
+      properties:
+        president:
+          $ref: '#/components/schemas/MemberIdentifier'
+        vicePresident:
+          $ref: '#/components/schemas/MemberIdentifier'
+        treasurer:
+          $ref: '#/components/schemas/MemberIdentifier'
+        secretary:
+          $ref: '#/components/schemas/MemberIdentifier'
+
+    AssignCollectivityIdentity:
+      type: object
       properties:
         number:
           type: string
-          example: COL-001
         name:
           type: string
-          example: Collectivité Riz Antsirabe
-        city:
-          type: string
-          example: Antsirabe
-        specialty:
-          type: string
-          example: Riziculture
-        creationDate:
-          type: string
-          format: date
-        federationAuthorization:
-          type: boolean
-          example: true
-        memberIds:
-          type: array
-          minItems: 10
-          items:
-            type: integer
-            format: int64
-        roleAssignments:
-          type: array
-          minItems: 4
-          items:
-            $ref: '#/components/schemas/RoleAssignmentRequest'
 
-    RoleAssignmentRequest:
+    CollectivityStructure:
       type: object
-      required: [memberId, role]
       properties:
-        memberId:
-          type: integer
-          format: int64
-        role:
-          $ref: '#/components/schemas/SpecificRole'
+        president:
+          $ref: '#/components/schemas/Member'
+        vicePresident:
+          $ref: '#/components/schemas/Member'
+        treasurer:
+          $ref: '#/components/schemas/Member'
+        secretary:
+          $ref: '#/components/schemas/Member'
 
-    CollectivityResponse:
+    Collectivity:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
         number:
           type: string
         name:
           type: string
-        city:
+        location:
           type: string
-        specialty:
+        structure:
+          $ref: '#/components/schemas/CollectivityStructure'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
+
+    MemberIdentifier:
+      type: string
+
+    CreateMember:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/MemberInformation'
+      properties:
+        collectivityIdentifier:
           type: string
-        creationDate:
-          type: string
-          format: date
-        federationAuthorization:
+        referees:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberIdentifier'
+        registrationFeePaid:
+          type: boolean
+        membershipDuesPaid:
           type: boolean
 
-    CreateMemberAdmissionRequest:
+    MemberInformation:
       type: object
-      required:
-        - firstName
-        - lastName
-        - birthDate
-        - gender
-        - address
-        - job
-        - phone
-        - email
-        - sponsors
-        - payment
       properties:
         firstName:
           type: string
@@ -734,527 +199,39 @@ components:
           $ref: '#/components/schemas/Gender'
         address:
           type: string
-        job:
+        profession:
           type: string
-        phone:
-          type: string
-          example: "0340000000"
-        email:
-          type: string
-          format: email
-        sponsors:
-          type: array
-          minItems: 2
-          items:
-            $ref: '#/components/schemas/SponsorRequest'
-          description: >
-            At least two confirmed federation members. Sponsors from the target collectivity
-            must be greater than or equal to sponsors from other collectivities.
-        payment:
-          $ref: '#/components/schemas/AdmissionPaymentRequest'
-
-    SponsorRequest:
-      type: object
-      required: [sponsorMemberId, relationshipNature]
-      properties:
-        sponsorMemberId:
-          type: integer
-          format: int64
-        relationshipNature:
-          type: string
-          example: FRIEND
-
-    AdmissionPaymentRequest:
-      type: object
-      required:
-        - admissionFeeAmount
-        - annualContributionAmount
-        - paymentMethod
-        - paymentDate
-      properties:
-        admissionFeeAmount:
-          type: number
-          format: double
-          example: 50000
-          description: Must be equal to 50000 MGA.
-        annualContributionAmount:
-          type: number
-          format: double
-          example: 200000
-          description: Must be equal to the annual contribution imposed by the target collectivity.
-        paymentMethod:
-          $ref: '#/components/schemas/AdmissionPaymentMethod'
-        paymentDate:
-          type: string
-          format: date
-        reference:
-          type: string
-
-    MemberResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        firstName:
-          type: string
-        lastName:
-          type: string
-        birthDate:
-          type: string
-          format: date
-        gender:
-          $ref: '#/components/schemas/Gender'
-        address:
-          type: string
-        job:
-          type: string
-        phone:
+        phoneNumber:
           type: string
         email:
           type: string
-          format: email
-        membershipDate:
-          type: string
-          format: date
-        status:
-          $ref: '#/components/schemas/MemberStatus'
-        currentCollectivityId:
-          type: integer
-          format: int64
+        occupation:
+          $ref: '#/components/schemas/MemberOccupation'
 
-    TransferMemberRequest:
+    Member:
       type: object
-      required: [newCollectivityId, transferDate]
-      properties:
-        newCollectivityId:
-          type: integer
-          format: int64
-        transferDate:
-          type: string
-          format: date
-        reason:
-          type: string
-
-    ResignationRequest:
-      type: object
-      required: [resignationDate]
-      properties:
-        resignationDate:
-          type: string
-          format: date
-        reason:
-          type: string
-
-    MembershipResponse:
-      type: object
-      properties:
-        memberId:
-          type: integer
-          format: int64
-        collectivityId:
-          type: integer
-          format: int64
-        startDate:
-          type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-          nullable: true
-        status:
-          $ref: '#/components/schemas/MembershipStatus'
-
-    CreateContributionRequest:
-      type: object
-      required:
-        - memberId
-        - type
-        - amount
-        - paymentDate
-        - paymentMethod
-      properties:
-        memberId:
-          type: integer
-          format: int64
-        type:
-          $ref: '#/components/schemas/ContributionType'
-        amount:
-          type: number
-          format: double
-        paymentDate:
-          type: string
-          format: date
-        paymentMethod:
-          $ref: '#/components/schemas/GeneralPaymentMethod'
-        federationPercentage:
-          type: number
-          format: double
-          nullable: true
-          description: Applicable to periodic contributions if configured.
-        reference:
-          type: string
-
-    ContributionResponse:
-      type: object
+      allOf:
+        - $ref: '#/components/schemas/MemberInformation'
       properties:
         id:
-          type: integer
-          format: int64
-        memberId:
-          type: integer
-          format: int64
-        collectivityId:
-          type: integer
-          format: int64
-        type:
-          $ref: '#/components/schemas/ContributionType'
-        amount:
-          type: number
-          format: double
-        paymentDate:
-          type: string
-          format: date
-        paymentMethod:
-          $ref: '#/components/schemas/GeneralPaymentMethod'
-        federationPercentage:
-          type: number
-          format: double
-          nullable: true
-
-    CreateAccountRequest:
-      type: object
-      required: [accountType]
-      properties:
-        accountType:
-          $ref: '#/components/schemas/AccountType'
-        label:
-          type: string
-          nullable: true
-        ownerName:
-          type: string
-          nullable: true
-        bankName:
-          allOf:
-            - $ref: '#/components/schemas/BankName'
-          nullable: true
-        accountNumber:
-          type: string
-          nullable: true
-          pattern: '^\d{23}$'
-          description: >
-            23 digits formatted as bank code (5), branch code (5), account number (11), RIB key (2).
-        mobileMoneyProvider:
-          allOf:
-            - $ref: '#/components/schemas/MobileMoneyProvider'
-          nullable: true
-        phoneNumber:
-          type: string
-          nullable: true
-        currency:
-          type: string
-          default: MGA
-          example: MGA
-
-    AccountResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        accountType:
-          $ref: '#/components/schemas/AccountType'
-        label:
-          type: string
-          nullable: true
-        ownerName:
-          type: string
-          nullable: true
-        bankName:
-          allOf:
-            - $ref: '#/components/schemas/BankName'
-          nullable: true
-        accountNumber:
-          type: string
-          nullable: true
-        mobileMoneyProvider:
-          allOf:
-            - $ref: '#/components/schemas/MobileMoneyProvider'
-          nullable: true
-        phoneNumber:
-          type: string
-          nullable: true
-        currency:
-          type: string
-        currentBalance:
-          type: number
-          format: double
-
-    AccountBalanceResponse:
-      type: object
-      properties:
-        accountId:
-          type: integer
-          format: int64
-        date:
-          type: string
-          format: date
-        balance:
-          type: number
-          format: double
-        currency:
-          type: string
-          example: MGA
-
-    CreateActivityRequest:
-      type: object
-      required:
-        - title
-        - activityType
-        - mandatory
-        - targetAudience
-        - activityDate
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        activityType:
-          $ref: '#/components/schemas/ActivityType'
-        mandatory:
-          type: boolean
-        targetAudience:
-          $ref: '#/components/schemas/TargetAudience'
-        activityDate:
-          type: string
-          format: date-time
-
-    ActivityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        title:
-          type: string
-        description:
-          type: string
-        activityType:
-          $ref: '#/components/schemas/ActivityType'
-        mandatory:
-          type: boolean
-        targetAudience:
-          $ref: '#/components/schemas/TargetAudience'
-        activityDate:
-          type: string
-          format: date-time
-
-    RecordAttendanceRequest:
-      type: object
-      required: [records]
-      properties:
-        records:
-          type: array
-          minItems: 1
-          items:
-            $ref: '#/components/schemas/AttendanceRecordRequest'
-
-    AttendanceRecordRequest:
-      type: object
-      required: [memberId, status]
-      properties:
-        memberId:
-          type: integer
-          format: int64
-        status:
-          $ref: '#/components/schemas/AttendanceStatus'
-        reason:
-          type: string
-          nullable: true
-        externalVisitor:
-          type: boolean
-          default: false
-        externalCollectivityId:
-          type: integer
-          format: int64
-          nullable: true
-
-    AttendanceResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        activityId:
-          type: integer
-          format: int64
-        memberId:
-          type: integer
-          format: int64
-        status:
-          $ref: '#/components/schemas/AttendanceStatus'
-        reason:
-          type: string
-          nullable: true
-        externalVisitor:
-          type: boolean
-        externalCollectivityId:
-          type: integer
-          format: int64
-          nullable: true
-
-    CollectivityStatisticsResponse:
-      type: object
-      properties:
-        collectivityId:
-          type: integer
-          format: int64
-        startDate:
-          type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-        activeMembersCount:
-          type: integer
-        globalAttendanceRate:
-          type: number
-          format: double
-        memberStatistics:
+          $ref: '#/components/schemas/MemberIdentifier'
+        referees:
           type: array
           items:
-            $ref: '#/components/schemas/MemberStatisticsItem'
-
-    MemberStatisticsItem:
-      type: object
-      properties:
-        memberId:
-          type: integer
-          format: int64
-        fullName:
-          type: string
-        attendanceRate:
-          type: number
-          format: double
-        collectedAmount:
-          type: number
-          format: double
-        potentialUnpaidAmount:
-          type: number
-          format: double
-
-    FederationStatisticsResponse:
-      type: object
-      properties:
-        startDate:
-          type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-        granularity:
-          type: string
-          enum: [MONTHLY, YEARLY]
-        collectivities:
-          type: array
-          items:
-            $ref: '#/components/schemas/FederationCollectivityStatisticsItem'
-
-    FederationCollectivityStatisticsItem:
-      type: object
-      properties:
-        collectivityId:
-          type: integer
-          format: int64
-        collectivityNumber:
-          type: string
-        collectivityName:
-          type: string
-        globalAttendanceRate:
-          type: number
-          format: double
-        upToDateContributionPercentage:
-          type: number
-          format: double
-        newMembersCount:
-          type: integer
-
-    ErrorResponse:
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        status:
-          type: integer
-        error:
-          type: string
-        message:
-          type: string
-        path:
-          type: string
+            $ref: '#/components/schemas/Member'
 
     Gender:
       type: string
-      enum: [MALE, FEMALE]
+      enum:
+        - MALE
+        - FEMALE
 
-    MemberStatus:
-      type: string
-      enum: [ACTIVE, RESIGNED, TRANSFERRED]
-
-    MembershipStatus:
-      type: string
-      enum: [ACTIVE, RESIGNED, TRANSFERRED, ENDED]
-
-    SpecificRole:
-      type: string
-      enum: [PRESIDENT, VICE_PRESIDENT, TREASURER, SECRETARY]
-
-    ContributionType:
-      type: string
-      enum: [MONTHLY, YEARLY, EXCEPTIONAL]
-
-    GeneralPaymentMethod:
-      type: string
-      enum: [CASH, BANK_TRANSFER, MOBILE_MONEY]
-
-    AdmissionPaymentMethod:
-      type: string
-      enum: [BANK_TRANSFER, MOBILE_MONEY]
-
-    AccountType:
-      type: string
-      enum: [CASH, BANK, MOBILE_MONEY]
-
-    BankName:
+    MemberOccupation:
       type: string
       enum:
-        - BRED
-        - MCB
-        - BMOI
-        - BOA
-        - BGFI
-        - AFG
-        - ACCES_BANQUE
-        - BAOBAB
-        - SIPEM
-
-    MobileMoneyProvider:
-      type: string
-      enum: [ORANGE_MONEY, MVOLA, AIRTEL_MONEY]
-
-    ActivityType:
-      type: string
-      enum:
-        - MONTHLY_GENERAL_ASSEMBLY
-        - MANDATORY_JUNIOR_TRAINING
-        - EXCEPTIONAL_ACTIVITY
-        - FEDERATION_ACTIVITY
-
-    TargetAudience:
-      type: string
-      enum: [ALL_MEMBERS, JUNIORS_ONLY, SPECIFIC_MEMBERS]
-
-    AttendanceStatus:
-      type: string
-      enum: [PRESENT, ABSENT, EXCUSED]
+        - JUNIOR
+        - SENIOR
+        - SECRETARY
+        - TREASURER
+        - VICE_PRESIDENT
+        - PRESIDENT
