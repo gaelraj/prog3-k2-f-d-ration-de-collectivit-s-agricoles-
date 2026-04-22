@@ -1,1 +1,1 @@
-create DATABASE
+create DATABASE federation_db;

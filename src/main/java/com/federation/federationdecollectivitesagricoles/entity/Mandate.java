@@ -14,15 +14,6 @@ public class Mandate {
     public Mandate() {
     }
 
-    public Mandate(Integer id, Integer membershipId, Integer positionId, LocalDate startDate, LocalDate endDate, Integer mandateCount) {
-        this.id = id;
-        this.membershipId = membershipId;
-        this.positionId = positionId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.mandateCount = mandateCount;
-    }
-
     public Integer getId() {
         return id;
     }

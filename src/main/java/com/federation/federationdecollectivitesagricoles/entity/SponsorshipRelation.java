@@ -10,13 +10,6 @@ public class SponsorshipRelation {
     public SponsorshipRelation() {
     }
 
-    public SponsorshipRelation(Integer id, Integer membershipId, Integer sponsorId, String relationshipNature) {
-        this.id = id;
-        this.membershipId = membershipId;
-        this.sponsorId = sponsorId;
-        this.relationshipNature = relationshipNature;
-    }
-
     public Integer getId() {
         return id;
     }

@@ -1,39 +1,31 @@
 package com.federation.federationdecollectivitesagricoles.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Member {
 
-    private Integer id;
+    private String id;
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
     private String gender;
     private String address;
-    private String occupation;
-    private String phone;
+    private String profession;
+    private String phoneNumber;
     private String email;
+    private String occupation;
+    private List<Member> referees = new ArrayList<>();
 
     public Member() {
     }
 
-    public Member(Integer id, String firstName, String lastName, LocalDate birthDate, String gender, String address, String occupation, String phone, String email) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = birthDate;
-        this.gender = gender;
-        this.address = address;
-        this.occupation = occupation;
-        this.phone = phone;
-        this.email = email;
-    }
-
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -77,20 +69,20 @@ public class Member {
         this.address = address;
     }
 
-    public String getOccupation() {
-        return occupation;
+    public String getProfession() {
+        return profession;
     }
 
-    public void setOccupation(String occupation) {
-        this.occupation = occupation;
+    public void setProfession(String profession) {
+        this.profession = profession;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getEmail() {
@@ -99,5 +91,21 @@ public class Member {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
+
+    public List<Member> getReferees() {
+        return referees;
+    }
+
+    public void setReferees(List<Member> referees) {
+        this.referees = referees;
     }
 }
