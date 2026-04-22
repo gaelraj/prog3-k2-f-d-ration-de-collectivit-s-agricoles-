@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 public class Collectivity {
     private Long id;
+    private String number;
+    private String name;
     private String location;
     private LocalDate creationDate;
     private Boolean federationApproval;
@@ -21,6 +23,10 @@ public class Collectivity {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+    public String getNumber() { return number; }
+    public void setNumber(String number) { this.number = number; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
     public LocalDate getCreationDate() { return creationDate; }

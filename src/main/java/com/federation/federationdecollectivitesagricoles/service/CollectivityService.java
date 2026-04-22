@@ -137,4 +137,41 @@ public class CollectivityService {
         info.setOccupation(member.getOccupation());
         return info;
     }
+
+    @Transactional
+    public CollectivityIdentificationResponse updateIdentification(Long id, IdentificationRequest request) {
+        Collectivity collectivity = collectivityRepository.findById(id);
+        if (collectivity == null) {
+            throw new RuntimeException("Collectivity not found");
+        }
+
+        if (collectivity.getNumber() != null && !collectivity.getNumber().isEmpty()) {
+            throw new RuntimeException("Number cannot be changed once assigned");
+        }
+        if (collectivity.getName() != null && !collectivity.getName().isEmpty()) {
+            throw new RuntimeException("Name cannot be changed once assigned");
+        }
+
+        if (collectivityRepository.existsByNumber(request.getNumber())) {
+            throw new RuntimeException("Number already exists");
+        }
+        if (collectivityRepository.existsByName(request.getName())) {
+            throw new RuntimeException("Name already exists");
+        }
+
+        collectivity.setNumber(request.getNumber());
+        collectivity.setName(request.getName());
+        collectivity = collectivityRepository.update(collectivity);
+
+        CollectivityIdentificationResponse response = new CollectivityIdentificationResponse();
+        response.setId(String.valueOf(collectivity.getId()));
+        response.setNumber(collectivity.getNumber());
+        response.setName(collectivity.getName());
+        response.setLocation(collectivity.getLocation());
+        response.setCreationDate(collectivity.getCreationDate());
+        response.setAuthorizationStatus(collectivity.getFederationApproval());
+
+        return response;
+    }
+
 }

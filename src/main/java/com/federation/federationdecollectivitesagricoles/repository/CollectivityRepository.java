@@ -20,15 +20,17 @@ public class CollectivityRepository {
     }
 
     public Collectivity save(Collectivity collectivity) {
-        String sql = "INSERT INTO collectivity (location, creation_date, authorization_status, annual_contribution_amount) VALUES (?, ?, ?, ?) RETURNING id";
+        String sql = "INSERT INTO collectivity (number, name, location, creation_date, authorization_status, annual_contribution_amount) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, collectivity.getLocation());
-            ps.setObject(2, collectivity.getCreationDate());
-            ps.setBoolean(3, collectivity.getFederationApproval());
-            ps.setBigDecimal(4, java.math.BigDecimal.valueOf(collectivity.getAnnualContributionAmount()));
+            ps.setString(1, collectivity.getNumber());
+            ps.setString(2, collectivity.getName());
+            ps.setString(3, collectivity.getLocation());
+            ps.setObject(4, collectivity.getCreationDate());
+            ps.setBoolean(5, collectivity.getFederationApproval());
+            ps.setBigDecimal(6, java.math.BigDecimal.valueOf(collectivity.getAnnualContributionAmount()));
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -62,7 +64,7 @@ public class CollectivityRepository {
     }
 
     public Collectivity findById(Long id) {
-        String sql = "SELECT id, location, creation_date, authorization_status, annual_contribution_amount FROM collectivity WHERE id = ?";
+        String sql = "SELECT id, number, name, location, creation_date, authorization_status, annual_contribution_amount FROM collectivity WHERE id = ?";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -72,6 +74,8 @@ public class CollectivityRepository {
                 if (rs.next()) {
                     Collectivity c = new Collectivity();
                     c.setId(rs.getLong("id"));
+                    c.setNumber(rs.getString("number"));
+                    c.setName(rs.getString("name"));
                     c.setLocation(rs.getString("location"));
                     c.setCreationDate(rs.getObject("creation_date", LocalDate.class));
                     c.setFederationApproval(rs.getBoolean("authorization_status"));
@@ -85,4 +89,65 @@ public class CollectivityRepository {
             throw new RuntimeException("Error finding collectivity: " + e.getMessage(), e);
         }
     }
+
+    public boolean existsByNumber(String number) {
+        String sql = "SELECT COUNT(*) FROM collectivity WHERE number = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, number);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+            return false;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking number existence: " + e.getMessage(), e);
+        }
+    }
+
+    public boolean existsByName(String name) {
+        String sql = "SELECT COUNT(*) FROM collectivity WHERE name = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, name);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+            return false;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking name existence: " + e.getMessage(), e);
+        }
+    }
+
+    public Collectivity update(Collectivity collectivity) {
+        String sql = "UPDATE collectivity SET number = ?, name = ?, location = ?, creation_date = ?, authorization_status = ?, annual_contribution_amount = ? WHERE id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, collectivity.getNumber());
+            ps.setString(2, collectivity.getName());
+            ps.setString(3, collectivity.getLocation());
+            ps.setObject(4, collectivity.getCreationDate());
+            ps.setBoolean(5, collectivity.getFederationApproval());
+            ps.setBigDecimal(6, java.math.BigDecimal.valueOf(collectivity.getAnnualContributionAmount()));
+            ps.setLong(7, collectivity.getId());
+
+            ps.executeUpdate();
+            return collectivity;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating collectivity: " + e.getMessage(), e);
+        }
+    }
+
 }

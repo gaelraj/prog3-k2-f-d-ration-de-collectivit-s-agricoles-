@@ -1,9 +1,12 @@
+
 package com.federation.federationdecollectivitesagricoles.entity;
 
 import java.time.LocalDate;
 
 public class Mandate {
     private Long id;
+    private String number;  // Nouveau
+    private String name;
     private Long membershipId;
     private Long positionId;
     private LocalDate startDate;
@@ -14,6 +17,10 @@ public class Mandate {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+    public String getNumber() { return number; }
+    public void setNumber(String number) { this.number = number; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
     public Long getMembershipId() { return membershipId; }
     public void setMembershipId(Long membershipId) { this.membershipId = membershipId; }
     public Long getPositionId() { return positionId; }
