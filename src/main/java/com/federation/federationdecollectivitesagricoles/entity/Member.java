@@ -14,7 +14,20 @@ public class Member {
     private String phone;
     private String email;
 
-    public Member() {}
+    public Member() {
+    }
+
+    public Member(Integer id, String firstName, String lastName, LocalDate birthDate, String gender, String address, String occupation, String phone, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.address = address;
+        this.occupation = occupation;
+        this.phone = phone;
+        this.email = email;
+    }
 
     public Integer getId() {
         return id;
