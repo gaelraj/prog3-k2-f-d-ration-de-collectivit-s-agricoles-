@@ -75,4 +75,31 @@ public class MemberRepository {
         m.setOccupation(rs.getString("occupation"));
         return m;
     }
+
+    public Member save(Member member) {
+        String sql = "INSERT INTO member (first_name, last_name, birth_date, gender, address, occupation, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, member.getFirstName());
+            ps.setString(2, member.getLastName());
+            ps.setObject(3, member.getBirthDate());
+            ps.setString(4, member.getGender());
+            ps.setString(5, member.getAddress());
+            ps.setString(6, member.getProfession());
+            ps.setString(7, member.getPhoneNumber());
+            ps.setString(8, member.getEmail());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    member.setId(rs.getLong(1));
+                }
+            }
+            return member;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving member: " + e.getMessage(), e);
+        }
+    }
 }

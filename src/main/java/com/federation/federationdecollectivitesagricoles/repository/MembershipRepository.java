@@ -101,4 +101,34 @@ public class MembershipRepository {
             throw new RuntimeException("Error getting membership id: " + e.getMessage(), e);
         }
     }
+
+    public Membership findMembershipByMemberAndCollectivity(Long memberId, Long collectivityId) {
+        String sql = "SELECT id, member_id, collectivity_id, membership_date, rank, is_active, admission_fee_paid, membership_dues_paid FROM membership WHERE member_id = ? AND collectivity_id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, memberId);
+            ps.setLong(2, collectivityId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Membership m = new Membership();
+                    m.setId(rs.getLong("id"));
+                    m.setMemberId(rs.getLong("member_id"));
+                    m.setCollectivityId(rs.getLong("collectivity_id"));
+                    m.setMembershipDate(rs.getObject("membership_date", LocalDate.class));
+                    m.setRank(rs.getString("rank"));
+                    m.setIsActive(rs.getBoolean("is_active"));
+                    m.setAdmissionFeePaid(rs.getBoolean("admission_fee_paid"));
+                    m.setMembershipDuesPaid(rs.getBoolean("membership_dues_paid"));
+                    return m;
+                }
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding membership: " + e.getMessage(), e);
+        }
+    }
+
 }
