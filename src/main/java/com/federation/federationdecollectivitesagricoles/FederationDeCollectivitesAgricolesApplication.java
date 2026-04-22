@@ -9,5 +9,4 @@ public class FederationDeCollectivitesAgricolesApplication {
     public static void main(String[] args) {
         SpringApplication.run(FederationDeCollectivitesAgricolesApplication.class, args);
     }
-
 }
