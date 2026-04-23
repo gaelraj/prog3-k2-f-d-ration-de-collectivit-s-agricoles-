@@ -104,3 +104,28 @@ CREATE TABLE contribution (
                               type contribution_type_type NOT NULL,
                               percentage_to_federation DECIMAL(5,2) DEFAULT 0
 );
+
+-- =====================================================
+-- TABLE: account (compte financier simplifié)
+-- =====================================================
+CREATE TABLE account (
+                         id SERIAL PRIMARY KEY,
+                         collectivity_id INT NOT NULL REFERENCES collectivity(id),
+                         account_type VARCHAR(50) NOT NULL,
+                         holder_name VARCHAR(255) NOT NULL,
+                         bank_name VARCHAR(100),
+                         account_number VARCHAR(50),
+                         mobile_service VARCHAR(50),
+                         phone_number VARCHAR(20)
+);
+
+-- =====================================================
+-- TABLE: account_balance (solde du compte à une date)
+-- =====================================================
+CREATE TABLE account_balance (
+                                 id SERIAL PRIMARY KEY,
+                                 account_id INT NOT NULL REFERENCES account(id),
+                                 balance_date DATE NOT NULL,
+                                 balance DECIMAL(15,2) NOT NULL DEFAULT 0,
+                                 UNIQUE(account_id, balance_date)
+);
