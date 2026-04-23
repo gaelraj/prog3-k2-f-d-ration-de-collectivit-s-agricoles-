@@ -30,7 +30,7 @@ public class CollectivityController {
         }
     }
 
-    @PutMapping("/collectivities/{id}/identification")
+    @PutMapping("/collectivities/{id}/informations")
     public ResponseEntity<?> updateIdentification(
             @PathVariable Long id,
             @RequestBody IdentificationRequest request) {
