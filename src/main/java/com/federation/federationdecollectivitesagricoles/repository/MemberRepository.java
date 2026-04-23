@@ -101,4 +101,31 @@ public class MemberRepository {
             throw new RuntimeException("Error saving member: " + e.getMessage(), e);
         }
     }
+    public List<Member> findAllByCollectivityId(Long collectivityId) {
+        String sql = """
+        SELECT m.id, m.first_name, m.last_name, m.birth_date, m.gender, m.address, m.occupation, m.phone, m.email
+        FROM member m
+        JOIN membership ms ON ms.member_id = m.id
+        WHERE ms.collectivity_id = ? AND ms.is_active = true
+    """;
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, collectivityId);
+
+            List<Member> members = new ArrayList<>();
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    members.add(mapRowToMember(rs));
+                }
+            }
+
+            return members;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding members by collectivity id: " + e.getMessage(), e);
+        }
+    }
 }

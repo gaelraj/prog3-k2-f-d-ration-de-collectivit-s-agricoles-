@@ -279,4 +279,40 @@ public class CollectivityService {
         }
         return responses;
     }
+    public CollectivityResponse getCollectivityById(Long id) {
+        Collectivity collectivity = collectivityRepository.findById(id);
+
+        if (collectivity == null) {
+            throw new RuntimeException("Collectivity not found");
+        }
+
+        List<Member> members = memberRepository.findAllByCollectivityId(id);
+
+        CollectivityResponse response = new CollectivityResponse();
+        response.setId(String.valueOf(collectivity.getId()));
+        response.setLocation(collectivity.getLocation());
+
+        List<MemberInfo> memberInfos = members.stream()
+                .map(m -> convertToMemberInfo(m))
+                .collect(Collectors.toList());
+
+        response.setMembers(memberInfos);
+        response.setStructure(null);
+
+        return response;
+    }
+    private MemberInfo convertToMemberInfo(Member member) {
+        MemberInfo info = new MemberInfo();
+        info.setId(String.valueOf(member.getId()));
+        info.setFirstName(member.getFirstName());
+        info.setLastName(member.getLastName());
+        info.setBirthDate(member.getBirthDate().toString());
+        info.setGender(member.getGender());
+        info.setAddress(member.getAddress());
+        info.setProfession(member.getProfession());
+        info.setPhoneNumber(member.getPhoneNumber());
+        info.setEmail(member.getEmail());
+        info.setOccupation(member.getProfession());
+        return info;
+    }
 }
