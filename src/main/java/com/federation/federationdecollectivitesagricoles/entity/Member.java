@@ -12,12 +12,11 @@ public class Member {
     private String profession;
     private String phoneNumber;
     private String email;
-    private String occupation;
 
     public Member() {}
 
     public Member(Long id, String firstName, String lastName, LocalDate birthDate, String gender,
-                  String address, String profession, String phoneNumber, String email, String occupation) {
+                  String address, String profession, String phoneNumber, String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -27,7 +26,6 @@ public class Member {
         this.profession = profession;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.occupation = occupation;
     }
 
     public Long getId() { return id; }
@@ -48,6 +46,5 @@ public class Member {
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    public String getOccupation() { return occupation; }
-    public void setOccupation(String occupation) { this.occupation = occupation; }
+
 }

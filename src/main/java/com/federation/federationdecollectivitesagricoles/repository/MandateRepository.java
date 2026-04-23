@@ -16,7 +16,7 @@ public class MandateRepository {
     }
 
     public Long getPositionIdByName(String name) {
-        String sql = "SELECT id FROM position WHERE name = ?";
+        String sql = "SELECT id FROM position WHERE name = ?::position_type";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

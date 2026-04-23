@@ -35,6 +35,17 @@ public class CollectivityService {
         this.transactionRepository = transactionRepository;
     }
 
+    public List<CollectivityResponse> createCollectivities(List<CreateCollectivityRequest> requests) {
+        List<CollectivityResponse> responses = new ArrayList<>();
+
+        for (CreateCollectivityRequest request : requests) {
+            CollectivityResponse response = createCollectivity(request);
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
     @Transactional
     public CollectivityResponse createCollectivity(CreateCollectivityRequest request) {
         if (request.getMembers() == null || request.getMembers().size() < 10) {
@@ -73,7 +84,7 @@ public class CollectivityService {
             membershipRepository.save(membership);
         }
 
-        CreateCollectivityRequest.CreateCollectivityStructure structure = request.getStructure();
+        CreateCollectivityStructure structure = request.getStructure();
 
         createMandate(Long.parseLong(structure.getPresident()), collectivity.getId(), "PRESIDENT");
         createMandate(Long.parseLong(structure.getVicePresident()), collectivity.getId(), "VICE_PRESIDENT");
@@ -100,37 +111,42 @@ public class CollectivityService {
         mandateRepository.save(mandate);
     }
 
-    private CollectivityResponse buildResponse(Collectivity collectivity, List<Member> members,
-                                               CreateCollectivityRequest.CreateCollectivityStructure structure) {
+    private CollectivityResponse buildResponse(Collectivity collectivity, List<Member> members, CreateCollectivityStructure structure) {
         CollectivityResponse response = new CollectivityResponse();
         response.setId(String.valueOf(collectivity.getId()));
+        response.setNumber(collectivity.getNumber() != null ? String.valueOf(collectivity.getNumber()) : null);
+        response.setName(collectivity.getName());
         response.setLocation(collectivity.getLocation());
 
         StructureInfo structureInfo = new StructureInfo();
-        structureInfo.setPresident(findMemberInfoById(members, Long.parseLong(structure.getPresident())));
-        structureInfo.setVicePresident(findMemberInfoById(members, Long.parseLong(structure.getVicePresident())));
-        structureInfo.setTreasurer(findMemberInfoById(members, Long.parseLong(structure.getTreasurer())));
-        structureInfo.setSecretary(findMemberInfoById(members, Long.parseLong(structure.getSecretary())));
+        structureInfo.setPresident(findMemberInfoById(members, Long.parseLong(structure.getPresident()), collectivity.getId()));
+        structureInfo.setVicePresident(findMemberInfoById(members, Long.parseLong(structure.getVicePresident()), collectivity.getId()));
+        structureInfo.setTreasurer(findMemberInfoById(members, Long.parseLong(structure.getTreasurer()), collectivity.getId()));
+        structureInfo.setSecretary(findMemberInfoById(members, Long.parseLong(structure.getSecretary()), collectivity.getId()));
         response.setStructure(structureInfo);
 
         List<MemberInfo> memberInfos = members.stream()
-                .map(this::convertToMemberInfo)
+                .map(m -> convertToMemberInfo(m, collectivity.getId()))
                 .collect(Collectors.toList());
         response.setMembers(memberInfos);
 
         return response;
     }
 
-    private MemberInfo findMemberInfoById(List<Member> members, Long id) {
+    private MemberInfo findMemberInfoById(List<Member> members, Long id, Long collectivityId) {
         Member member = members.stream()
                 .filter(m -> m.getId().equals(id))
                 .findFirst()
                 .orElse(null);
-        return member != null ? convertToMemberInfo(member) : null;
+        return member != null ? convertToMemberInfo(member, collectivityId) : null;
     }
 
-    private MemberInfo convertToMemberInfo(Member member) {
+    private MemberInfo convertToMemberInfo(Member member, Long collectivityId) {
         if (member == null) return null;
+
+        Membership membership = membershipRepository.findMembershipByMemberAndCollectivity(member.getId(), collectivityId);
+        String occupation = membership != null ? membership.getRank() : "JUNIOR";
+
         MemberInfo info = new MemberInfo();
         info.setId(String.valueOf(member.getId()));
         info.setFirstName(member.getFirstName());
@@ -139,9 +155,10 @@ public class CollectivityService {
         info.setGender(member.getGender());
         info.setAddress(member.getAddress());
         info.setProfession(member.getProfession());
-        info.setPhoneNumber(Long.parseLong(member.getPhoneNumber()));
+        info.setPhoneNumber(member.getPhoneNumber());
         info.setEmail(member.getEmail());
-        info.setOccupation(member.getOccupation());
+        info.setOccupation(occupation);
+
         return info;
     }
 

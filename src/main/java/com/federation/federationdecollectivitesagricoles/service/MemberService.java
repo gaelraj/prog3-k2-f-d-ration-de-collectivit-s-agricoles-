@@ -82,7 +82,7 @@ public class MemberService {
         member.setGender(request.getGender());
         member.setAddress(request.getAddress());
         member.setProfession(request.getProfession());
-        member.setPhoneNumber(String.valueOf(request.getPhoneNumber()));
+        member.setPhoneNumber(request.getPhoneNumber());
         member.setEmail(request.getEmail());
         member = memberRepository.save(member);
 
@@ -114,7 +114,7 @@ public class MemberService {
         response.setGender(member.getGender());
         response.setAddress(member.getAddress());
         response.setProfession(member.getProfession());
-        response.setPhoneNumber(Long.parseLong(member.getPhoneNumber()));
+        response.setPhoneNumber(member.getPhoneNumber());
         response.setEmail(member.getEmail());
         response.setOccupation(membership.getRank());
 

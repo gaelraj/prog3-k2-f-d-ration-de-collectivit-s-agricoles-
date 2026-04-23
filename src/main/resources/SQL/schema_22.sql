@@ -17,10 +17,10 @@ CREATE TYPE contribution_type_type AS ENUM ('REGISTRATION_FEE', 'MEMBERSHIP_DUES
 -- =====================================================
 CREATE TABLE collectivity (
                               id SERIAL PRIMARY KEY,
-                              number VARCHAR(50) UNIQUE NOT NULL,
-                              name VARCHAR(255) UNIQUE NOT NULL,
+                              number VARCHAR(50) UNIQUE,
+                              name VARCHAR(255) UNIQUE,
                               location VARCHAR(255) NOT NULL,
-                              agricultural_specialty VARCHAR(255) NOT NULL,
+                              agricultural_specialty VARCHAR(255),
                               creation_date DATE NOT NULL DEFAULT CURRENT_DATE,
                               authorization_status BOOLEAN NOT NULL DEFAULT FALSE,
                               annual_contribution_amount DECIMAL(15,2) NOT NULL DEFAULT 0

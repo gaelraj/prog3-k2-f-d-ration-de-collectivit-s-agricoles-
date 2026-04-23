@@ -17,7 +17,7 @@ public class MembershipRepository {
     }
 
     public void save(Membership membership) {
-        String sql = "INSERT INTO membership (member_id, collectivity_id, membership_date, rank, is_active, admission_fee_paid, membership_dues_paid) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO membership (member_id, collectivity_id, membership_date, rank, is_active, admission_fee_paid, membership_dues_paid) VALUES (?, ?, ?, ?::member_rank_type, ?, ?, ?)";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

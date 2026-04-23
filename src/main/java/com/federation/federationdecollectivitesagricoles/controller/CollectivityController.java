@@ -19,10 +19,10 @@ public class CollectivityController {
     }
 
     @PostMapping("/collectivities")
-    public ResponseEntity<?> createCollectivity(@RequestBody CreateCollectivityRequest request) {
+    public ResponseEntity<?> createCollectivities(@RequestBody List<CreateCollectivityRequest> requests) {
         try {
-            CollectivityResponse response = collectivityService.createCollectivity(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            List<CollectivityResponse> responses = collectivityService.createCollectivities(requests);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responses);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

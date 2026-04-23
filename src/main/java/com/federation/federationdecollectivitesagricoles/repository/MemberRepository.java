@@ -19,7 +19,7 @@ public class MemberRepository {
     }
 
     public Member findById(Long id) {
-        String sql = "SELECT id, first_name, last_name, birth_date, gender, address, occupation, phone, email FROM member WHERE id = ?";
+        String sql = "SELECT id, first_name, last_name, birth_date, gender, address, profession, phone, email FROM member WHERE id = ?";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -40,7 +40,7 @@ public class MemberRepository {
     public List<Member> findAllByIds(List<Long> ids) {
         if (ids == null || ids.isEmpty()) return new ArrayList<>();
 
-        String sql = "SELECT id, first_name, last_name, birth_date, gender, address, occupation, phone, email FROM member WHERE id = ANY(?)";
+        String sql = "SELECT id, first_name, last_name, birth_date, gender, address, profession, phone, email FROM member WHERE id = ANY(?)";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -69,15 +69,14 @@ public class MemberRepository {
         m.setBirthDate(rs.getObject("birth_date", LocalDate.class));
         m.setGender(rs.getString("gender"));
         m.setAddress(rs.getString("address"));
-        m.setProfession(rs.getString("occupation"));
+        m.setProfession(rs.getString("profession"));
         m.setPhoneNumber(rs.getString("phone"));
         m.setEmail(rs.getString("email"));
-        m.setOccupation(rs.getString("occupation"));
         return m;
     }
 
     public Member save(Member member) {
-        String sql = "INSERT INTO member (first_name, last_name, birth_date, gender, address, occupation, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        String sql = "INSERT INTO member (first_name, last_name, birth_date, gender, address, profession, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
