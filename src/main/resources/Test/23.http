@@ -1,0 +1,108 @@
+### ====================================================
+### TESTS DES ENDPOINTS GET EXISTANTS
+### FÉDÉRATION DE COLLECTIVITÉS AGRICOLES
+### ====================================================
+
+### Variables
+@baseUrl = http://localhost:8080
+@collectivityId = 1
+@memberId = 1
+@invalidId = 999
+
+### ====================================================
+### 1. GET /collectivities - Récupérer toutes les collectivités
+### ====================================================
+
+GET {{baseUrl}}/collectivities
+
+### ====================================================
+### 2. GET /collectivities/{id} - Récupérer une collectivité par ID
+### ====================================================
+
+GET {{baseUrl}}/collectivities/{{collectivityId}}
+
+### ====================================================
+### 3. GET /collectivities/{id} - Collectivité non trouvée (404)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/{{invalidId}}
+
+### ====================================================
+### 4. GET /collectivities/{id}/membershipFees - Récupérer les cotisations d'une collectivité
+### ====================================================
+
+GET {{baseUrl}}/collectivities/{{collectivityId}}/membershipFees
+
+### ====================================================
+### 5. GET /collectivities/{id}/membershipFees - Collectivité non trouvée (404)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/{{invalidId}}/membershipFees
+
+### ====================================================
+### 6. GET /collectivities/{id}/transactions - Récupérer les transactions (avec dates)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/{{collectivityId}}/transactions?from=2026-01-01&to=2026-12-31
+
+### ====================================================
+### 7. GET /collectivities/{id}/transactions - Paramètres manquants (400)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/{{collectivityId}}/transactions
+
+### ====================================================
+### 8. GET /collectivities/{id}/transactions - Collectivité non trouvée (404)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/{{invalidId}}/transactions?from=2026-01-01&to=2026-12-31
+
+### ====================================================
+### 9. GET /collectivities/{id}/financialAccounts - Récupérer les comptes financiers
+### ====================================================
+
+GET {{baseUrl}}/collectivities/{{collectivityId}}/financialAccounts?at=2026-01-01
+
+### ====================================================
+### 10. GET /collectivities/{id}/financialAccounts - Collectivité non trouvée (404)
+### ====================================================
+GET http://localhost:8080/collectivities/1/transactions?from=2026-01-01&to=2026-12-31
+
+###
+GET {{baseUrl}}/collectivities/{{invalidId}}/financialAccounts?at=2026-01-01
+
+### ====================================================
+### 11. GET /collectivities/{id}/financialAccounts - Paramètre at manquant (400)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/{{collectivityId}}/financialAccounts
+
+### ====================================================
+### 12. GET /ingredients (si endpoint existe)
+### ====================================================
+
+GET {{baseUrl}}/ingredients
+
+### ====================================================
+### 13. GET /ingredients/{id} (si endpoint existe)
+### ====================================================
+
+GET {{baseUrl}}/ingredients/1
+
+### ====================================================
+### 14. GET /dishes (si endpoint existe)
+### ====================================================
+
+GET {{baseUrl}}/dishes
+
+### ====================================================
+### 15. GET /members (si endpoint existe)
+### ====================================================
+
+GET {{baseUrl}}/members
+
+### ====================================================
+### 16. GET /members/{id} (si endpoint existe)
+### ====================================================
+
+GET {{baseUrl}}/members/1

@@ -8,7 +8,6 @@ public class Transaction {
     private Long memberId;
     private Double amount;
     private String paymentMode;
-    private Long accountCreditedId;
     private LocalDate creationDate;
 
     public Long getId() { return id; }
@@ -21,8 +20,6 @@ public class Transaction {
     public void setAmount(Double amount) { this.amount = amount; }
     public String getPaymentMode() { return paymentMode; }
     public void setPaymentMode(String paymentMode) { this.paymentMode = paymentMode; }
-    public Long getAccountCreditedId() { return accountCreditedId; }
-    public void setAccountCreditedId(Long accountCreditedId) { this.accountCreditedId = accountCreditedId; }
     public LocalDate getCreationDate() { return creationDate; }
     public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }
 }

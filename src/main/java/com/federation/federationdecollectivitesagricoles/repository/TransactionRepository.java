@@ -18,7 +18,7 @@ public class TransactionRepository {
     }
 
     public List<Transaction> findByCollectivityIdAndDateRange(Long collectivityId, LocalDate from, LocalDate to) {
-        String sql = "SELECT id, collectivity_id, member_id, amount, payment_mode, account_credited_id, creation_date FROM transaction WHERE collectivity_id = ? AND creation_date BETWEEN ? AND ?";
+        String sql = "SELECT id, collectivity_id, member_id, amount, payment_mode, payment_date FROM transaction WHERE collectivity_id = ? AND payment_date BETWEEN ? AND ?";
         List<Transaction> transactions = new ArrayList<>();
 
         try (Connection conn = dataSource.getConnection();
@@ -35,8 +35,7 @@ public class TransactionRepository {
                     t.setMemberId(rs.getLong("member_id"));
                     t.setAmount(rs.getDouble("amount"));
                     t.setPaymentMode(rs.getString("payment_mode"));
-                    t.setAccountCreditedId(rs.getLong("account_credited_id"));
-                    t.setCreationDate(rs.getObject("creation_date", LocalDate.class));
+                    t.setCreationDate(rs.getObject("payment_date", LocalDate.class));
                     transactions.add(t);
                 }
             }
@@ -48,7 +47,7 @@ public class TransactionRepository {
     }
 
     public Transaction save(Transaction transaction) {
-        String sql = "INSERT INTO transaction (collectivity_id, member_id, amount, payment_mode, account_credited_id, creation_date) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
+        String sql = "INSERT INTO transaction (collectivity_id, member_id, amount, payment_mode, payment_date) VALUES (?, ?, ?, ?, ?) RETURNING id";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -57,8 +56,7 @@ public class TransactionRepository {
             ps.setLong(2, transaction.getMemberId());
             ps.setDouble(3, transaction.getAmount());
             ps.setString(4, transaction.getPaymentMode());
-            ps.setLong(5, transaction.getAccountCreditedId());
-            ps.setObject(6, transaction.getCreationDate());
+            ps.setObject(5, transaction.getCreationDate());
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {

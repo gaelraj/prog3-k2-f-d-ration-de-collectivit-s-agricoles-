@@ -22,3 +22,5 @@ SELECT * FROM position;
 SELECT * FROM mandate;
 SELECT * FROM sponsorship_relation;
 SELECT * FROM contribution;
+
+

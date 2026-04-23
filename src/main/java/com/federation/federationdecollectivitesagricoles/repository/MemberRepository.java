@@ -103,7 +103,7 @@ public class MemberRepository {
     }
     public List<Member> findAllByCollectivityId(Long collectivityId) {
         String sql = """
-        SELECT m.id, m.first_name, m.last_name, m.birth_date, m.gender, m.address, m.occupation, m.phone, m.email
+        SELECT m.id, m.first_name, m.last_name, m.birth_date, m.gender, m.address, m.profession, m.phone, m.email
         FROM member m
         JOIN membership ms ON ms.member_id = m.id
         WHERE ms.collectivity_id = ? AND ms.is_active = true

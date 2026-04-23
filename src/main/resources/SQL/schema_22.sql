@@ -129,3 +129,39 @@ CREATE TABLE account_balance (
                                  balance DECIMAL(15,2) NOT NULL DEFAULT 0,
                                  UNIQUE(account_id, balance_date)
 );
+
+-- =====================================================
+-- AJOUT DES DEUX TABLES MANQUANTES
+-- =====================================================
+
+-- =====================================================
+-- TABLE: membership_fee (cotisations définies par collectivité)
+-- =====================================================
+CREATE TABLE membership_fee (
+                                id SERIAL PRIMARY KEY,
+                                collectivity_id INT NOT NULL REFERENCES collectivity(id),
+                                eligible_from DATE NOT NULL,
+                                frequency VARCHAR(50) NOT NULL,
+                                amount DECIMAL(15,2) NOT NULL,
+                                label VARCHAR(255),
+                                status VARCHAR(50) DEFAULT 'ACTIVE'
+);
+
+CREATE INDEX idx_membership_fee_collectivity ON membership_fee(collectivity_id);
+
+-- =====================================================
+-- TABLE: transaction (historique des paiements et transactions)
+-- =====================================================
+CREATE TABLE transaction (
+                             id SERIAL PRIMARY KEY,
+                             collectivity_id INT NOT NULL REFERENCES collectivity(id),
+                             member_id INT NOT NULL REFERENCES member(id),
+                             amount DECIMAL(15,2) NOT NULL,
+                             payment_date DATE NOT NULL DEFAULT CURRENT_DATE,
+                             payment_mode VARCHAR(50) NOT NULL,
+                             description TEXT
+);
+
+CREATE INDEX idx_transaction_collectivity ON transaction(collectivity_id);
+CREATE INDEX idx_transaction_member ON transaction(member_id);
+CREATE INDEX idx_transaction_date ON transaction(payment_date);
