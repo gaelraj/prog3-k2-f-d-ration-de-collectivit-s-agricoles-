@@ -21,8 +21,8 @@ CREATE TABLE collectivity (
                               name VARCHAR(255) UNIQUE,
                               location VARCHAR(255) NOT NULL,
                               agricultural_specialty VARCHAR(255),
-                              creation_date DATE NOT NULL DEFAULT CURRENT_DATE,
-                              authorization_status BOOLEAN NOT NULL DEFAULT FALSE,
+                              creation_date DATE DEFAULT CURRENT_DATE,
+                              authorization_status BOOLEAN DEFAULT FALSE,
                               annual_contribution_amount DECIMAL(15,2) NOT NULL DEFAULT 0
 );
 
