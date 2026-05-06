@@ -4,7 +4,7 @@ import com.federation.federationdecollectivitesagricoles.dto.CreateCollectivityS
 
 import java.util.List;
 
-public class CreateCollectivityRequest {
+public class    CreateCollectivityRequest {
     private String location;
     private List<String> members;
     private Boolean federationApproval;
