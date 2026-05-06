@@ -244,7 +244,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MemberPayment'
-  '/collectivites/{id}/statistics':
+  '/collectivities/{id}/statistics':
     get:
       summary: Get local statistics for a collectivity
       description: |
@@ -277,7 +277,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CollectivityLocalStatistics'
-  '/collectivites/statistics':
+  '/collectivities/statistics':
     get:
       summary: Get collectivities overall statistics
       description: |
