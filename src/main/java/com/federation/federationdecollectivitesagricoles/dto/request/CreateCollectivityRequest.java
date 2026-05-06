@@ -1,4 +1,6 @@
-package com.federation.federationdecollectivitesagricoles.dto;
+package com.federation.federationdecollectivitesagricoles.dto.request;
+
+import com.federation.federationdecollectivitesagricoles.dto.CreateCollectivityStructure;
 
 import java.util.List;
 

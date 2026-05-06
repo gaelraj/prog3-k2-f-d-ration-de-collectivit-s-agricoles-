@@ -1,6 +1,13 @@
 package com.federation.federationdecollectivitesagricoles.service;
 
 import com.federation.federationdecollectivitesagricoles.dto.*;
+import com.federation.federationdecollectivitesagricoles.dto.request.CreateCollectivityRequest;
+import com.federation.federationdecollectivitesagricoles.dto.request.CreateMembershipFeeRequest;
+import com.federation.federationdecollectivitesagricoles.dto.request.IdentificationRequest;
+import com.federation.federationdecollectivitesagricoles.dto.response.CollectivityIdentificationResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.CollectivityResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.CollectivityTransactionResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.MembershipFeeResponse;
 import com.federation.federationdecollectivitesagricoles.entity.*;
 import com.federation.federationdecollectivitesagricoles.repository.*;
 import org.springframework.stereotype.Service;
@@ -279,40 +286,52 @@ public class CollectivityService {
         }
         return responses;
     }
-    public CollectivityResponse getCollectivityById(Long id) {
-        Collectivity collectivity = collectivityRepository.findById(id);
+
+    public CollectivityResponse getCollectivityById(String id) {
+        Collectivity collectivity = collectivityRepository.findByCode(id);
 
         if (collectivity == null) {
-            throw new RuntimeException("Collectivity not found");
+            try {
+                Long idLong = Long.parseLong(id);
+                collectivity = collectivityRepository.findById(idLong);
+                if (collectivity == null) {
+                    throw new RuntimeException("Collectivity not found");
+                }
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("Collectivity not found");
+            }
         }
 
-        List<Member> members = memberRepository.findAllByCollectivityId(id);
+        List<Member> members = memberRepository.findAllByCollectivityId(collectivity.getId());
+        CreateCollectivityStructure structure = getStructureFromCollectivity(collectivity.getId());
 
-        CollectivityResponse response = new CollectivityResponse();
-        response.setId(String.valueOf(collectivity.getId()));
-        response.setLocation(collectivity.getLocation());
-
-        List<MemberInfo> memberInfos = members.stream()
-                .map(m -> convertToMemberInfo(m))
-                .collect(Collectors.toList());
-
-        response.setMembers(memberInfos);
-        response.setStructure(null);
-
-        return response;
+        return buildResponse(collectivity, members, structure);
     }
-    private MemberInfo convertToMemberInfo(Member member) {
-        MemberInfo info = new MemberInfo();
-        info.setId(String.valueOf(member.getId()));
-        info.setFirstName(member.getFirstName());
-        info.setLastName(member.getLastName());
-        info.setBirthDate(member.getBirthDate().toString());
-        info.setGender(member.getGender());
-        info.setAddress(member.getAddress());
-        info.setProfession(member.getProfession());
-        info.setPhoneNumber(member.getPhoneNumber());
-        info.setEmail(member.getEmail());
-        info.setOccupation(member.getProfession());
-        return info;
+
+    private CreateCollectivityStructure getStructureFromCollectivity(Long collectivityId) {
+        CreateCollectivityStructure structure = new CreateCollectivityStructure();
+
+        Long presidentId = membershipRepository.findMemberIdByPosition(collectivityId, "PRESIDENT");
+        if (presidentId != null) {
+            structure.setPresident(String.valueOf(presidentId));
+        }
+
+        Long vicePresidentId = membershipRepository.findMemberIdByPosition(collectivityId, "VICE_PRESIDENT");
+        if (vicePresidentId != null) {
+            structure.setVicePresident(String.valueOf(vicePresidentId));
+        }
+
+        Long treasurerId = membershipRepository.findMemberIdByPosition(collectivityId, "TREASURER");
+        if (treasurerId != null) {
+            structure.setTreasurer(String.valueOf(treasurerId));
+        }
+
+        Long secretaryId = membershipRepository.findMemberIdByPosition(collectivityId, "SECRETARY");
+        if (secretaryId != null) {
+            structure.setSecretary(String.valueOf(secretaryId));
+        }
+
+        return structure;
     }
+
 }

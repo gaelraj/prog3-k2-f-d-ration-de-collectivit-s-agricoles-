@@ -19,6 +19,35 @@ public class CollectivityRepository {
         this.dataSource = dataSource;
     }
 
+    public Collectivity findByCode(String code) {
+        String sql = "SELECT id, code, number, name, location, creation_date, authorization_status, annual_contribution_amount " +
+                "FROM collectivity WHERE code = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, code);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Collectivity c = new Collectivity();
+                    c.setId(rs.getLong("id"));
+                    c.setCode(rs.getString("code"));
+                    c.setNumber(rs.getString("number"));
+                    c.setName(rs.getString("name"));
+                    c.setLocation(rs.getString("location"));
+                    c.setCreationDate(rs.getObject("creation_date", LocalDate.class));
+                    c.setFederationApproval(rs.getBoolean("authorization_status"));
+                    c.setAnnualContributionAmount(rs.getBigDecimal("annual_contribution_amount").longValue());
+                    return c;
+                }
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding collectivity by code: " + e.getMessage(), e);
+        }
+    }
+
     public Collectivity save(Collectivity collectivity) {
         String sql = "INSERT INTO collectivity (number, name, location, creation_date, authorization_status, annual_contribution_amount) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
 

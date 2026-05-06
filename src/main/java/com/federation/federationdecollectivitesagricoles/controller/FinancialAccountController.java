@@ -1,6 +1,6 @@
 package com.federation.federationdecollectivitesagricoles.controller;
 
-import com.federation.federationdecollectivitesagricoles.dto.FinancialAccountResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.FinancialAccountResponse;
 import com.federation.federationdecollectivitesagricoles.service.FinancialAccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

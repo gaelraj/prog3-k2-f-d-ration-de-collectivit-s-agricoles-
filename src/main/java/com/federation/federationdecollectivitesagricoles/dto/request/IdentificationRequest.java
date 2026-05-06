@@ -1,5 +1,5 @@
 // dto/IdentificationRequest.java
-package com.federation.federationdecollectivitesagricoles.dto;
+package com.federation.federationdecollectivitesagricoles.dto.request;
 
 public class IdentificationRequest {
     private String number;

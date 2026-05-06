@@ -15,6 +15,25 @@ public class MandateRepository {
         this.dataSource = dataSource;
     }
 
+    public Long findActivePositionByMembershipId(Long membershipId) {
+        String sql = "SELECT position_id FROM mandate WHERE membership_id = ? AND end_date > CURRENT_DATE LIMIT 1";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, membershipId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding active position: " + e.getMessage(), e);
+        }
+    }
+
     public Long getPositionIdByName(String name) {
         String sql = "SELECT id FROM position WHERE name = ?::position_type";
 

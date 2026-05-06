@@ -1,4 +1,4 @@
-package com.federation.federationdecollectivitesagricoles.dto;
+package com.federation.federationdecollectivitesagricoles.dto.request;
 
 import java.time.LocalDate;
 

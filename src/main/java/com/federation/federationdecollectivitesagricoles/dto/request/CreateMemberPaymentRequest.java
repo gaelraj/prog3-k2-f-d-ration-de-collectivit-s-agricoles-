@@ -1,4 +1,4 @@
-package com.federation.federationdecollectivitesagricoles.dto;
+package com.federation.federationdecollectivitesagricoles.dto.request;
 
 public class CreateMemberPaymentRequest {
     private Integer amount;

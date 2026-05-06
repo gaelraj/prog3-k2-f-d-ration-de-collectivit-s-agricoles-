@@ -1,4 +1,6 @@
-package com.federation.federationdecollectivitesagricoles.dto;
+package com.federation.federationdecollectivitesagricoles.dto.response;
+
+import com.federation.federationdecollectivitesagricoles.dto.RefereeInfo;
 
 import java.util.List;
 

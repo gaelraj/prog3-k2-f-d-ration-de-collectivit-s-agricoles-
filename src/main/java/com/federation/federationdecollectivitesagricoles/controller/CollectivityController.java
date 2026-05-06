@@ -1,6 +1,12 @@
 package com.federation.federationdecollectivitesagricoles.controller;
 
-import com.federation.federationdecollectivitesagricoles.dto.*;
+import com.federation.federationdecollectivitesagricoles.dto.request.CreateCollectivityRequest;
+import com.federation.federationdecollectivitesagricoles.dto.request.CreateMembershipFeeRequest;
+import com.federation.federationdecollectivitesagricoles.dto.request.IdentificationRequest;
+import com.federation.federationdecollectivitesagricoles.dto.response.CollectivityIdentificationResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.CollectivityResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.CollectivityTransactionResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.MembershipFeeResponse;
 import com.federation.federationdecollectivitesagricoles.service.CollectivityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +86,7 @@ public class CollectivityController {
         }
     }
     @GetMapping("/collectivities/{id}")
-    public ResponseEntity<?> getCollectivityById(@PathVariable Long id) {
+    public ResponseEntity<?> getCollectivityById(@PathVariable String id) {
         try {
             CollectivityResponse response = collectivityService.getCollectivityById(id);
             return ResponseEntity.ok(response);

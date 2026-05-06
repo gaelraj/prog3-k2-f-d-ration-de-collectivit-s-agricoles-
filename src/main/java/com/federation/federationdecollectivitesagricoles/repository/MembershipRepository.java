@@ -16,6 +16,30 @@ public class MembershipRepository {
         this.dataSource = dataSource;
     }
 
+    public Long findMemberIdByPosition(Long collectivityId, String positionName) {
+        String sql = "SELECT ms.member_id FROM membership ms " +
+                "JOIN mandate md ON ms.id = md.membership_id " +
+                "JOIN position p ON md.position_id = p.id " +
+                "WHERE ms.collectivity_id = ? AND p.name = ?::position_type " +
+                "AND md.end_date > CURRENT_DATE";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, collectivityId);
+            ps.setString(2, positionName);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding member id by position: " + e.getMessage(), e);
+        }
+    }
+
     public void save(Membership membership) {
         String sql = "INSERT INTO membership (member_id, collectivity_id, membership_date, rank, is_active, admission_fee_paid, membership_dues_paid) VALUES (?, ?, ?, ?::member_rank_type, ?, ?, ?)";
 

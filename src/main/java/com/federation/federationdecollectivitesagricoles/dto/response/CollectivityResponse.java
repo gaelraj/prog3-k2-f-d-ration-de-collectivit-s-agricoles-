@@ -1,4 +1,7 @@
-package com.federation.federationdecollectivitesagricoles.dto;
+package com.federation.federationdecollectivitesagricoles.dto.response;
+
+import com.federation.federationdecollectivitesagricoles.dto.MemberInfo;
+import com.federation.federationdecollectivitesagricoles.dto.StructureInfo;
 
 import java.util.List;
 

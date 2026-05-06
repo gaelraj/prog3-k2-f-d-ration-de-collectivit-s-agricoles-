@@ -1,10 +1,9 @@
 package com.federation.federationdecollectivitesagricoles.repository;
 
-import com.federation.federationdecollectivitesagricoles.dto.FinancialAccountResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.FinancialAccountResponse;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

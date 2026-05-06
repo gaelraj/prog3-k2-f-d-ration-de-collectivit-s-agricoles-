@@ -1,6 +1,10 @@
 package com.federation.federationdecollectivitesagricoles.service;
 
 import com.federation.federationdecollectivitesagricoles.dto.*;
+import com.federation.federationdecollectivitesagricoles.dto.request.CreateMemberPaymentRequest;
+import com.federation.federationdecollectivitesagricoles.dto.request.CreateMemberRequest;
+import com.federation.federationdecollectivitesagricoles.dto.response.MemberPaymentResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.MemberResponse;
 import com.federation.federationdecollectivitesagricoles.entity.*;
 import com.federation.federationdecollectivitesagricoles.repository.*;
 import org.springframework.stereotype.Service;

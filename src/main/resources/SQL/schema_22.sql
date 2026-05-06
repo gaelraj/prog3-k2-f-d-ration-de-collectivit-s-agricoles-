@@ -17,6 +17,7 @@ CREATE TYPE contribution_type_type AS ENUM ('REGISTRATION_FEE', 'MEMBERSHIP_DUES
 -- =====================================================
 CREATE TABLE collectivity (
                               id SERIAL PRIMARY KEY,
+                              code varchar(50) UNIQUE,
                               number VARCHAR(50) UNIQUE,
                               name VARCHAR(255) UNIQUE,
                               location VARCHAR(255) NOT NULL,
@@ -46,6 +47,7 @@ CREATE TABLE member (
 -- =====================================================
 CREATE TABLE membership (
                             id SERIAL PRIMARY KEY,
+                            code varchar(50) UNIQUE,
                             member_id INT NOT NULL REFERENCES member(id),
                             collectivity_id INT NOT NULL REFERENCES collectivity(id),
                             membership_date DATE NOT NULL DEFAULT CURRENT_DATE,

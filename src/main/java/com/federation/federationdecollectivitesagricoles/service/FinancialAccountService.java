@@ -1,6 +1,6 @@
 package com.federation.federationdecollectivitesagricoles.service;
 
-import com.federation.federationdecollectivitesagricoles.dto.FinancialAccountResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.FinancialAccountResponse;
 import com.federation.federationdecollectivitesagricoles.entity.Collectivity;
 import com.federation.federationdecollectivitesagricoles.repository.CollectivityRepository;
 import com.federation.federationdecollectivitesagricoles.repository.FinancialAccountRepository;

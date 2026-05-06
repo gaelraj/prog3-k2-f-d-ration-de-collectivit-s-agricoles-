@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class Collectivity {
     private Long id;
+    private String code;
     private String number;
     private String name;
     private String location;
@@ -22,6 +23,8 @@ public class Collectivity {
     }
 
     public Long getId() { return id; }
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code;}
     public void setId(Long id) { this.id = id; }
     public String getNumber() { return number; }
     public void setNumber(String number) { this.number = number; }

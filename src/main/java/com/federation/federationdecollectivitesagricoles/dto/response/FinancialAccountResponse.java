@@ -1,4 +1,4 @@
-package com.federation.federationdecollectivitesagricoles.dto;
+package com.federation.federationdecollectivitesagricoles.dto.response;
 
 public class FinancialAccountResponse {
     private String id;

@@ -1,5 +1,5 @@
 // dto/CollectivityIdentificationResponse.java
-package com.federation.federationdecollectivitesagricoles.dto;
+package com.federation.federationdecollectivitesagricoles.dto.response;
 
 import java.time.LocalDate;
 

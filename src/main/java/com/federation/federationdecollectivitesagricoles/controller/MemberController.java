@@ -1,9 +1,9 @@
 package com.federation.federationdecollectivitesagricoles.controller;
 
-import com.federation.federationdecollectivitesagricoles.dto.CreateMemberPaymentRequest;
-import com.federation.federationdecollectivitesagricoles.dto.CreateMemberRequest;
-import com.federation.federationdecollectivitesagricoles.dto.MemberPaymentResponse;
-import com.federation.federationdecollectivitesagricoles.dto.MemberResponse;
+import com.federation.federationdecollectivitesagricoles.dto.request.CreateMemberPaymentRequest;
+import com.federation.federationdecollectivitesagricoles.dto.request.CreateMemberRequest;
+import com.federation.federationdecollectivitesagricoles.dto.response.MemberPaymentResponse;
+import com.federation.federationdecollectivitesagricoles.dto.response.MemberResponse;
 import com.federation.federationdecollectivitesagricoles.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
