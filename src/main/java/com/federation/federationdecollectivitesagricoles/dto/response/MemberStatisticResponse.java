@@ -1,24 +1,32 @@
 package com.federation.federationdecollectivitesagricoles.dto.response;
 
 public class MemberStatisticResponse {
-    private String memberId;
-    private String firstName;
-    private String lastName;
-    private Double totalPaid;
+
+    private MemberDescriptionResponse memberDescription;
+    private Double earnedAmount;
     private Double unpaidAmount;
 
-    public String getMemberId() { return memberId; }
-    public void setMemberId(String memberId) { this.memberId = memberId; }
+    public MemberDescriptionResponse getMemberDescription() {
+        return memberDescription;
+    }
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setMemberDescription(MemberDescriptionResponse memberDescription) {
+        this.memberDescription = memberDescription;
+    }
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public Double getEarnedAmount() {
+        return earnedAmount;
+    }
 
-    public Double getTotalPaid() { return totalPaid; }
-    public void setTotalPaid(Double totalPaid) { this.totalPaid = totalPaid; }
+    public void setEarnedAmount(Double earnedAmount) {
+        this.earnedAmount = earnedAmount;
+    }
 
-    public Double getUnpaidAmount() { return unpaidAmount; }
-    public void setUnpaidAmount(Double unpaidAmount) { this.unpaidAmount = unpaidAmount; }
+    public Double getUnpaidAmount() {
+        return unpaidAmount;
+    }
+
+    public void setUnpaidAmount(Double unpaidAmount) {
+        this.unpaidAmount = unpaidAmount;
+    }
 }
