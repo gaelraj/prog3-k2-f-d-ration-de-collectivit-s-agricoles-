@@ -27,19 +27,22 @@ public class CollectivityService {
     private final MandateRepository mandateRepository;
     private final MembershipFeeRepository membershipFeeRepository;
     private final TransactionRepository transactionRepository;
+    private final StatisticRepository statisticRepository;
 
     public CollectivityService(CollectivityRepository collectivityRepository,
                                MemberRepository memberRepository,
                                MembershipRepository membershipRepository,
                                MandateRepository mandateRepository,
                                MembershipFeeRepository membershipFeeRepository,
-                               TransactionRepository transactionRepository) {
+                               TransactionRepository transactionRepository,
+                               StatisticRepository statisticRepository) {
         this.collectivityRepository = collectivityRepository;
         this.memberRepository = memberRepository;
         this.membershipRepository = membershipRepository;
         this.mandateRepository = mandateRepository;
         this.membershipFeeRepository = membershipFeeRepository;
         this.transactionRepository = transactionRepository;
+        this.statisticRepository = statisticRepository;
     }
 
     public List<CollectivityResponse> createCollectivities(List<CreateCollectivityRequest> requests) {
@@ -51,6 +54,22 @@ public class CollectivityService {
         }
 
         return responses;
+    }
+
+    public List<CollectivityLocalStatistics> getLocalStatistics(String collectivityId, LocalDate from, LocalDate to) {
+
+        try {
+            Long id = Long.parseLong(collectivityId);
+            return statisticRepository.getLocalStatisticsById(id, from, to);
+        } catch (NumberFormatException e) {
+
+        }
+
+        try {
+            return statisticRepository.getLocalStatisticsByCode(collectivityId, from, to);
+        } catch (Exception e) {
+            throw new RuntimeException("Collectivity not found: " + collectivityId);
+        }
     }
 
     @Transactional

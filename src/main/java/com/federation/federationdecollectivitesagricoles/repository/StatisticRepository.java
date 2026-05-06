@@ -1,5 +1,7 @@
 package com.federation.federationdecollectivitesagricoles.repository;
 
+import com.federation.federationdecollectivitesagricoles.dto.CollectivityLocalStatistics;
+import com.federation.federationdecollectivitesagricoles.dto.MemberDescription;
 import com.federation.federationdecollectivitesagricoles.dto.response.CollectivityStatisticResponse;
 import com.federation.federationdecollectivitesagricoles.dto.response.MemberDescriptionResponse;
 import com.federation.federationdecollectivitesagricoles.dto.response.MemberStatisticResponse;
@@ -18,6 +20,125 @@ public class StatisticRepository {
 
     public StatisticRepository(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public List<CollectivityLocalStatistics> getLocalStatisticsByCode(String collectivityId, LocalDate from, LocalDate to) {
+        String sql = """
+    SELECT 
+        m.id,
+        m.first_name,
+        m.last_name,
+        m.email,
+        COALESCE(p.name::text, ms.rank::text) as occupation,
+        COALESCE(SUM(c.amount), 0) as earned_amount,
+        COALESCE(mf.total_fees - SUM(c.amount), mf.total_fees) as unpaid_amount
+    FROM member m
+    JOIN membership ms ON m.id = ms.member_id
+    LEFT JOIN mandate md ON ms.id = md.membership_id AND md.end_date > CURRENT_DATE
+    LEFT JOIN position p ON md.position_id = p.id
+    LEFT JOIN contribution c ON ms.id = c.membership_id AND c.payment_date BETWEEN ? AND ?
+    CROSS JOIN (
+        SELECT COALESCE(SUM(amount), 0) as total_fees 
+        FROM membership_fee 
+        WHERE collectivity_id = (SELECT id FROM collectivity WHERE code = ?) 
+        AND status = 'ACTIVE'
+    ) mf
+    WHERE ms.collectivity_id = (SELECT id FROM collectivity WHERE code = ?) AND ms.is_active = true
+    GROUP BY m.id, m.first_name, m.last_name, m.email, p.name, ms.rank, mf.total_fees
+    """;
+
+        List<CollectivityLocalStatistics> statistics = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setObject(1, from);
+            ps.setObject(2, to);
+            ps.setString(3, collectivityId);
+            ps.setString(4, collectivityId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    MemberDescription memberDesc = new MemberDescription();
+                    memberDesc.setId(String.valueOf(rs.getLong("id")));
+                    memberDesc.setFirstName(rs.getString("first_name"));
+                    memberDesc.setLastName(rs.getString("last_name"));
+                    memberDesc.setEmail(rs.getString("email"));
+                    memberDesc.setOccupation(rs.getString("occupation"));
+
+                    CollectivityLocalStatistics stat = new CollectivityLocalStatistics();
+                    stat.setMemberDescription(memberDesc);
+                    stat.setEarnedAmount(rs.getDouble("earned_amount"));
+                    stat.setUnpaidAmount(rs.getDouble("unpaid_amount"));
+
+                    statistics.add(stat);
+                }
+            }
+
+            return statistics;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting local statistics: " + e.getMessage(), e);
+        }
+    }
+
+    public List<CollectivityLocalStatistics> getLocalStatisticsById(Long collectivityId, LocalDate from, LocalDate to) {
+        String sql = """
+        SELECT 
+            m.id,
+            m.first_name,
+            m.last_name,
+            m.email,
+            COALESCE(p.name::text, ms.rank::text) as occupation,
+            COALESCE(SUM(c.amount), 0) as earned_amount,
+            COALESCE(mf.total_fees - SUM(c.amount), mf.total_fees) as unpaid_amount
+        FROM member m
+        JOIN membership ms ON m.id = ms.member_id
+        LEFT JOIN mandate md ON ms.id = md.membership_id AND md.end_date > CURRENT_DATE
+        LEFT JOIN position p ON md.position_id = p.id
+        LEFT JOIN contribution c ON ms.id = c.membership_id AND c.payment_date BETWEEN ? AND ?
+        CROSS JOIN (
+            SELECT COALESCE(SUM(amount), 0) as total_fees 
+            FROM membership_fee 
+            WHERE collectivity_id = ? AND status = 'ACTIVE'
+        ) mf
+        WHERE ms.collectivity_id = ? AND ms.is_active = true
+        GROUP BY m.id, m.first_name, m.last_name, m.email, p.name, ms.rank, mf.total_fees
+        """;
+
+        List<CollectivityLocalStatistics> statistics = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setObject(1, from);
+            ps.setObject(2, to);
+            ps.setLong(3, collectivityId);
+            ps.setLong(4, collectivityId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    MemberDescription memberDesc = new MemberDescription();
+                    memberDesc.setId(String.valueOf(rs.getLong("id")));
+                    memberDesc.setFirstName(rs.getString("first_name"));
+                    memberDesc.setLastName(rs.getString("last_name"));
+                    memberDesc.setEmail(rs.getString("email"));
+                    memberDesc.setOccupation(rs.getString("occupation"));
+
+                    CollectivityLocalStatistics stat = new CollectivityLocalStatistics();
+                    stat.setMemberDescription(memberDesc);
+                    stat.setEarnedAmount(rs.getDouble("earned_amount"));
+                    stat.setUnpaidAmount(rs.getDouble("unpaid_amount"));
+
+                    statistics.add(stat);
+                }
+            }
+
+            return statistics;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting local statistics by id: " + e.getMessage(), e);
+        }
     }
 
     public List<MemberStatisticResponse> findLocalStatistics(Long collectivityId, LocalDate from, LocalDate to) {

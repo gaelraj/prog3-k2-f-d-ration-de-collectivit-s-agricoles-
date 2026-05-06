@@ -1,0 +1,24 @@
+### ====================================================
+### TEST STATISTIQUES COLLECTIVITÉ (G) - v0.0.5
+### GET /collectivities/{id}/statistics
+### ====================================================
+
+@baseUrl = http://localhost:8080
+
+### 1. Avec code collectivité (col-1)
+GET {{baseUrl}}/collectivities/col-1/statistics?from=2026-01-01&to=2026-12-31
+
+### 2. Avec ID numérique (1)
+GET {{baseUrl}}/collectivities/1/statistics?from=2026-01-01&to=2026-12-31
+
+### 3. Avec code membership (C1-M1)
+GET {{baseUrl}}/collectivities/C1-M1/statistics?from=2026-01-01&to=2026-12-31
+
+### 4. Collectivité non trouvée (404)
+GET {{baseUrl}}/collectivities/xxx/statistics?from=2026-01-01&to=2026-12-31
+
+### 5. Paramètres from et to manquants (400)
+GET {{baseUrl}}/collectivities/col-1/statistics
+
+### 6. Dates différentes
+GET {{baseUrl}}/collectivities/col-1/statistics?from=2026-06-01&to=2026-12-31
