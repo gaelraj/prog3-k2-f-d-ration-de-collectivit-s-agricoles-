@@ -98,3 +98,34 @@ Accept: application/json
 ### Variante H - statistiques globales avec /collectivities
 GET {{baseUrl}}/collectivities/statistics?from=2026-01-01&to=2026-04-30
 Accept: application/json
+
+---------------------
+
+
+### Test sans clé API - doit retourner 401 Bad credentials
+GET {{baseUrl}}/collectivites/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+
+
+### Test avec mauvaise clé API - doit retourner 401 Bad credentials
+GET {{baseUrl}}/collectivites/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+x-api-key: wrong-key
+
+
+### Test avec bonne clé API - doit retourner 200 si le traitement est correct
+GET {{baseUrl}}/collectivites/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+x-api-key: agri-secure-key
+
+
+### Test collectivité locale avec bonne clé API
+GET {{baseUrl}}/collectivites/col-1/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+x-api-key: agri-secure-key
+
+
+### Test GET collectivity by id avec bonne clé API
+GET {{baseUrl}}/collectivities/col-1
+Accept: application/json
+x-api-key: agri-secure-key
