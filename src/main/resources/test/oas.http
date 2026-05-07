@@ -1,4 +1,5 @@
 @baseUrl = http://localhost:8080
+@apiKey = agri-secure-key
 
 
 ### ============================================================
@@ -129,3 +130,215 @@ x-api-key: agri-secure-key
 GET {{baseUrl}}/collectivities/col-1
 Accept: application/json
 x-api-key: agri-secure-key
+
+-----------------------------------------------------
+
+
+### ============================================================
+### SÉCURITÉ - TEST API KEY
+### ============================================================
+
+
+### Sans x-api-key - doit retourner 401 Bad credentials
+GET {{baseUrl}}/collectivities/col-1/activities
+Accept: application/json
+
+
+### Mauvaise x-api-key - doit retourner 401 Bad credentials
+GET {{baseUrl}}/collectivities/col-1/activities
+Accept: application/json
+x-api-key: wrong-key
+
+
+### Bonne x-api-key - doit retourner 200
+GET {{baseUrl}}/collectivities/col-1/activities
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+
+
+### ============================================================
+### E - GET ACTIVITÉS PAR COLLECTIVITÉ
+### ============================================================
+
+
+### E.1 - Récupérer les activités de la collectivité 1
+### Attendu : act-1 AG1 + act-2 Formation de base
+GET {{baseUrl}}/collectivities/col-1/activities
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+### E.2 - Récupérer les activités de la collectivité 2
+### Attendu : act-3 AG2 + act-4 Formation de base + act-5 Perfectionnement
+GET {{baseUrl}}/collectivities/col-2/activities
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+### E.3 - Récupérer les activités de la collectivité 3
+### Attendu : act-6 AG3 + act-7 Formation de base
+GET {{baseUrl}}/collectivities/col-3/activities
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+### E.4 - Collectivité inexistante - doit retourner 404
+GET {{baseUrl}}/collectivities/col-999/activities
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+
+
+### ============================================================
+### E - POST AJOUT ACTIVITÉ
+### ============================================================
+
+
+### E.5 - Ajouter une activité ponctuelle à col-1
+POST {{baseUrl}}/collectivities/col-1/activities
+Content-Type: application/json
+Accept: application/json
+x-api-key: {{apiKey}}
+
+[
+  {
+    "label": "Visite terrain",
+    "activityType": "PUNCTUAL",
+    "memberOccupationConcerned": ["SENIOR"],
+    "executiveDate": "2026-05-20"
+  }
+]
+
+
+### E.6 - Ajouter une activité récurrente à col-1
+POST {{baseUrl}}/collectivities/col-1/activities
+Content-Type: application/json
+Accept: application/json
+x-api-key: {{apiKey}}
+
+[
+  {
+    "label": "Réunion spéciale juniors",
+    "activityType": "MEETING",
+    "memberOccupationConcerned": ["JUNIOR"],
+    "recurrenceRule": {
+      "weekOrdinal": 2,
+      "dayOfWeek": "SA"
+    }
+  }
+]
+
+
+### E.7 - Erreur : executiveDate ET recurrenceRule ensemble - doit retourner 400
+POST {{baseUrl}}/collectivities/col-1/activities
+Content-Type: application/json
+Accept: application/json
+x-api-key: {{apiKey}}
+
+[
+  {
+    "label": "Activité invalide",
+    "activityType": "MEETING",
+    "memberOccupationConcerned": ["JUNIOR"],
+    "executiveDate": "2026-05-20",
+    "recurrenceRule": {
+      "weekOrdinal": 2,
+      "dayOfWeek": "SA"
+    }
+  }
+]
+
+
+
+
+### ============================================================
+### F - GET PRÉSENCE PAR ACTIVITÉ
+### ============================================================
+
+
+### F.1 - Présences AG1 collectivité 1
+### Attendu : présences de act-1
+GET {{baseUrl}}/collectivities/col-1/activities/act-1/attendance
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+### F.2 - Présences AG2 collectivité 2
+### Attendu : présences de act-3
+GET {{baseUrl}}/collectivities/col-2/activities/act-3/attendance
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+### F.3 - Présences Perfectionnement collectivité 2
+### Attendu : act-5 avec ATTENDED, MISSING et UNDEFINED
+GET {{baseUrl}}/collectivities/col-2/activities/act-5/attendance
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+### F.4 - Présences AG3 collectivité 3
+### Attendu : act-6 avec aussi C1-M1 comme membre extérieur présent
+GET {{baseUrl}}/collectivities/col-3/activities/act-6/attendance
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+### F.5 - Activité inexistante - doit retourner 404
+GET {{baseUrl}}/collectivities/col-1/activities/act-999/attendance
+Accept: application/json
+x-api-key: {{apiKey}}
+
+
+
+
+### ============================================================
+### F - POST PRÉSENCE
+### Attention : ce test marche surtout pour modifier un UNDEFINED déjà existant.
+### Exemple : act-5 contient C1-M5 en UNDEFINED dans les données SQL.
+### ============================================================
+
+
+### F.6 - Modifier une présence UNDEFINED vers ATTENDED
+POST {{baseUrl}}/collectivities/col-2/activities/act-5/attendance
+Content-Type: application/json
+Accept: application/json
+x-api-key: {{apiKey}}
+
+[
+  {
+    "memberIdentifier": "C1-M5",
+    "attendanceStatus": "ATTENDED"
+  }
+]
+
+
+### F.7 - Réessayer de modifier une présence déjà confirmée - doit retourner 400
+POST {{baseUrl}}/collectivities/col-2/activities/act-5/attendance
+Content-Type: application/json
+Accept: application/json
+x-api-key: {{apiKey}}
+
+[
+  {
+    "memberIdentifier": "C1-M5",
+    "attendanceStatus": "MISSING"
+  }
+]
+
+
+### F.8 - Membre inexistant - doit retourner 404
+POST {{baseUrl}}/collectivities/col-2/activities/act-5/attendance
+Content-Type: application/json
+Accept: application/json
+x-api-key: {{apiKey}}
+
+[
+  {
+    "memberIdentifier": "UNKNOWN-MEMBER",
+    "attendanceStatus": "ATTENDED"
+  }
+]
