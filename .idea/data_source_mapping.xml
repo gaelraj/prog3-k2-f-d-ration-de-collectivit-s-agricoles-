@@ -6,6 +6,7 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/migration/3_create_collectivity_member_table.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
     <file url="file://$PROJECT_DIR$/src/main/resources/migration/4_create_member_referee_table.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
     <file url="file://$PROJECT_DIR$/src/main/resources/migration/5_create_membership_fee.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/migration/6_bonus_shema.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
     <file url="file://$PROJECT_DIR$/src/main/resources/testdata/1_collectivity_testdata.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
     <file url="file://$PROJECT_DIR$/src/main/resources/testdata/2_member_testdata.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
     <file url="file://$PROJECT_DIR$/src/main/resources/testdata/3_membership_fee.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />

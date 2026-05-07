@@ -6,6 +6,7 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/migration/3_create_collectivity_member_table.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/src/main/resources/migration/4_create_member_referee_table.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/src/main/resources/migration/5_create_membership_fee.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/migration/6_bonus_shema.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/src/main/resources/testdata/1_collectivity_testdata.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/src/main/resources/testdata/2_member_testdata.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/src/main/resources/testdata/3_membership_fee.sql" dialect="PostgreSQL" />
