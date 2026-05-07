@@ -106,3 +106,50 @@ GET {{baseUrl}}/members
 ### ====================================================
 
 GET {{baseUrl}}/members/1
+
+### ====================================================
+### TEST API KEY SECURITY - ENDPOINTS STATISTIQUES
+### ====================================================
+
+@validApiKey = agri-secure-key
+@invalidApiKey = wrong-key
+
+### ====================================================
+### 1. TEST SUCCÈS - GET /collectivities/col-1/statistics avec clé valide
+### ====================================================
+
+GET {{baseUrl}}/collectivities/col-1/statistics?from=2026-01-01&to=2026-12-31
+x-api-key: {{validApiKey}}
+
+### ====================================================
+### 2. TEST ERREUR - GET /collectivities/col-1/statistics sans clé (401)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/col-1/statistics?from=2026-01-01&to=2026-12-31
+
+### ====================================================
+### 3. TEST ERREUR - GET /collectivities/col-1/statistics avec clé invalide (401)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/col-1/statistics?from=2026-01-01&to=2026-12-31
+x-api-key: {{invalidApiKey}}
+
+### ====================================================
+### 4. TEST SUCCÈS - GET /collectivities/statistics avec clé valide
+### ====================================================
+
+GET {{baseUrl}}/collectivities/statistics?from=2026-01-01&to=2026-12-31
+x-api-key: {{validApiKey}}
+
+### ====================================================
+### 5. TEST ERREUR - GET /collectivities/statistics sans clé (401)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/statistics?from=2026-01-01&to=2026-12-31
+
+### ====================================================
+### 6. TEST ERREUR - GET /collectivities/statistics avec clé invalide (401)
+### ====================================================
+
+GET {{baseUrl}}/collectivities/statistics?from=2026-01-01&to=2026-12-31
+x-api-key: {{invalidApiKey}}
