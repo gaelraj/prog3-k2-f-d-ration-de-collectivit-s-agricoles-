@@ -1,6 +1,7 @@
 @baseUrl = http://localhost:8080
 @apiKey = agri-secure-key
-
+@validApikey = agri-secure-key
+@invalidApiKey = azerty
 
 ### ============================================================
 ### G - STATISTIQUES LOCALES D'UNE COLLECTIVITÉ
@@ -12,7 +13,7 @@
 ### G.1 - Statistiques locales de la collectivité 1
 GET {{baseUrl}}/collectivites/col-1/statistics?from=2026-01-01&to=2026-04-30
 Accept: application/json
-
+x-Api-Key: {{invalidApiKey}}
 
 ### G.2 - Statistiques locales de la collectivité 2
 GET {{baseUrl}}/collectivites/col-2/statistics?from=2026-01-01&to=2026-04-30
