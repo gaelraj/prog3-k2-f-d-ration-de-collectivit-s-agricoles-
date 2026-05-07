@@ -61,14 +61,14 @@ INSERT INTO membership (code, member_id, collectivity_id, membership_date, rank,
 
 -- Collectivité 3 (col-3)
 INSERT INTO membership (code, member_id, collectivity_id, membership_date, rank, is_active, admission_fee_paid, membership_dues_paid) VALUES
-                                                                                                                                          ('C3-M9', 9, 3, '2026-01-01', 'CONFIRMED', true, true, true),
-                                                                                                                                          ('C3-M10', 10, 3, '2026-01-01', 'CONFIRMED', true, true, true),
-                                                                                                                                          ('C3-M11', 11, 3, '2026-01-01', 'CONFIRMED', true, true, true),
-                                                                                                                                          ('C3-M12', 12, 3, '2026-01-01', 'CONFIRMED', true, true, true),
-                                                                                                                                          ('C3-M13', 13, 3, '2026-01-01', 'CONFIRMED', true, true, true),
-                                                                                                                                          ('C3-M14', 14, 3, '2026-01-01', 'CONFIRMED', true, true, true),
-                                                                                                                                          ('C3-M15', 15, 3, '2026-01-01', 'CONFIRMED', true, true, true),
-                                                                                                                                          ('C3-M16', 16, 3, '2026-01-01', 'CONFIRMED', true, true, true);
+                                                                                                                                          ('C3-M1', 9, 3, '2026-01-01', 'CONFIRMED', true, true, true),
+                                                                                                                                          ('C3-M2', 10, 3, '2026-01-01', 'CONFIRMED', true, true, true),
+                                                                                                                                          ('C3-M3', 11, 3, '2026-01-01', 'CONFIRMED', true, true, true),
+                                                                                                                                          ('C3-M4', 12, 3, '2026-01-01', 'CONFIRMED', true, true, true),
+                                                                                                                                          ('C3-M5', 13, 3, '2026-01-01', 'CONFIRMED', true, true, true),
+                                                                                                                                          ('C3-M6', 14, 3, '2026-01-01', 'CONFIRMED', true, true, true),
+                                                                                                                                          ('C3-M7', 15, 3, '2026-01-01', 'CONFIRMED', true, true, true),
+                                                                                                                                          ('C3-M8', 16, 3, '2026-01-01', 'CONFIRMED', true, true, true);
 
 
 -- =====================================================
@@ -224,71 +224,92 @@ WHERE ms.code = 'C1-M8';
 -- Collectivité 2
 -- C2-M3 parrainé par C2-M1 et C2-M2
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M1'), 'ami'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M1'), 'ami'
 FROM membership ms
 WHERE ms.code = 'C2-M3';
 
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M2'), 'ami'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M2'), 'ami'
 FROM membership ms
 WHERE ms.code = 'C2-M3';
 
 -- C2-M4 parrainé par C2-M1 et C2-M2
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M1'), 'collegue'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M1'), 'collegue'
 FROM membership ms
 WHERE ms.code = 'C2-M4';
 
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M2'), 'collegue'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M2'), 'collegue'
 FROM membership ms
 WHERE ms.code = 'C2-M4';
 
 -- C2-M5 parrainé par C2-M1 et C2-M2
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M1'), 'famille'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M1'), 'famille'
 FROM membership ms
 WHERE ms.code = 'C2-M5';
 
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M2'), 'famille'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M2'), 'famille'
 FROM membership ms
 WHERE ms.code = 'C2-M5';
 
 -- C2-M6 parrainé par C2-M1 et C2-M2
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M1'), 'ami'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M1'), 'ami'
 FROM membership ms
 WHERE ms.code = 'C2-M6';
 
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M2'), 'ami'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M2'), 'ami'
 FROM membership ms
 WHERE ms.code = 'C2-M6';
 
 -- C2-M7 parrainé par C2-M1 et C2-M2
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M1'), 'collegue'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M1'), 'collegue'
 FROM membership ms
 WHERE ms.code = 'C2-M7';
 
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M2'), 'collegue'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M2'), 'collegue'
 FROM membership ms
 WHERE ms.code = 'C2-M7';
 
 -- C2-M8 parrainé par C2-M6 et C2-M7
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M6'), 'famille'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M6'), 'famille'
 FROM membership ms
 WHERE ms.code = 'C2-M8';
 
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
-SELECT ms.id, (SELECT id FROM membership WHERE code = 'C2-M7'), 'famille'
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M7'), 'famille'
 FROM membership ms
 WHERE ms.code = 'C2-M8';
 
 -- Collectivité 3
+
+INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M1'), 'ami'
+FROM membership ms
+WHERE ms.code = 'C3-M1';
+
+INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M2'), 'ami'
+FROM membership ms
+WHERE ms.code = 'C3-M1';
+
+INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M1'), 'ami'
+FROM membership ms
+WHERE ms.code = 'C3-M2';
+
+INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
+SELECT ms.id, (SELECT id FROM membership WHERE code = 'C1-M2'), 'ami'
+FROM membership ms
+WHERE ms.code = 'C3-M2';
+
 -- C3-M3 parrainé par C3-M1 et C3-M2
 INSERT INTO sponsorship_relation (membership_id, sponsor_membership_id, relationship_nature)
 SELECT ms.id, (SELECT id FROM membership WHERE code = 'C3-M1'), 'ami'
@@ -408,35 +429,63 @@ FROM membership m WHERE m.collectivity_id = 3;
 -- 8. ACCOUNTS (COMPTES FINANCIERS)
 -- =====================================================
 
-INSERT INTO account (collectivity_id, account_type, holder_name, mobile_service, phone_number, bank_name, account_number) VALUES
-                                                                                                                              (1, 'CASH', '-', NULL, NULL, NULL, NULL),
-                                                                                                                              (1, 'MOBILE_MONEY', 'Mpanorina', 'ORANGE_MONEY', '0370489612', NULL, NULL),
-                                                                                                                              (2, 'CASH', '-', NULL, NULL, NULL, NULL),
-                                                                                                                              (2, 'MOBILE_MONEY', 'Dobo voalohany', 'ORANGE_MONEY', '0320489612', NULL, NULL),
-                                                                                                                              (3, 'CASH', '-', NULL, NULL, NULL, NULL);
+INSERT INTO account (code, collectivity_id, account_type, holder_name, mobile_service, phone_number, initial_amount) VALUES
+                                                                                                                         ('C1-A-CASH', 1, 'CASH', '-', NULL, NULL, 0),
+                                                                                                                         ('C1-A-MOBILE-1', 1, 'ORANGE_MONEY', 'Mpanorina', 'ORANGE_MONEY', '0370489612', 0),
+                                                                                                                         ('C2-A-CASH', 2, 'CASH', '-', NULL, NULL, 0),
+                                                                                                                         ('C2-A-MOBILE-1', 2, 'ORANGE_MONEY', 'Dobo voalohany', 'ORANGE_MONEY', '0320489612', 0),
+                                                                                                                         ('C3-A-CASH', 3, 'CASH', '-', NULL, NULL, 0);
 
 -- =====================================================
 -- 9. TRANSACTIONS
 -- =====================================================
 
-INSERT INTO transaction (collectivity_id, member_id, amount, payment_date, payment_mode, description) VALUES
-                                                                                                          (1, 1, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (1, 2, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (1, 3, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (1, 4, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (1, 5, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (1, 6, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (1, 7, 60000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (1, 8, 90000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (2, 1, 60000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (2, 2, 90000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (2, 3, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (2, 4, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (2, 5, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (2, 6, 100000, '2026-01-01', 'CASH', 'Paiement cotisation annuelle'),
-                                                                                                          (2, 7, 40000, '2026-01-01', 'MOBILE_MONEY', 'Paiement cotisation annuelle'),
-                                                                                                          (2, 8, 60000, '2026-01-01', 'MOBILE_MONEY', 'Paiement cotisation annuelle');
+-- Insertion des transactions pour la collectivité 1
+INSERT INTO transaction (collectivity_id, member_id, amount, payment_date, payment_mode, account_id, description)
+SELECT
+    c.id,
+    m.id,
+    t.amount,
+    t.payment_date::date,
+    t.payment_mode,
+    acc.id,
+    t.description
+FROM (VALUES
+          ('col-1', 'C1-M1', 100000, '2026-01-01', 'CASH', 'C1-A-CASH', 'Paiement cotisation annuelle'),
+          ('col-1', 'C1-M2', 100000, '2026-01-01', 'CASH', 'C1-A-CASH', 'Paiement cotisation annuelle'),
+          ('col-1', 'C1-M3', 100000, '2026-01-01', 'CASH', 'C1-A-CASH', 'Paiement cotisation annuelle'),
+          ('col-1', 'C1-M4', 100000, '2026-01-01', 'CASH', 'C1-A-CASH', 'Paiement cotisation annuelle'),
+          ('col-1', 'C1-M5', 100000, '2026-01-01', 'CASH', 'C1-A-CASH', 'Paiement cotisation annuelle'),
+          ('col-1', 'C1-M6', 100000, '2026-01-01', 'CASH', 'C1-A-CASH', 'Paiement cotisation annuelle'),
+          ('col-1', 'C1-M7', 60000,  '2026-01-01', 'CASH', 'C1-A-CASH', 'Paiement cotisation annuelle'),
+          ('col-1', 'C1-M8', 90000,  '2026-01-01', 'CASH', 'C1-A-CASH', 'Paiement cotisation annuelle')
+     ) AS t(collectivity_code, member_code, amount, payment_date, payment_mode, account_code, description)
+         JOIN collectivity c ON c.code = t.collectivity_code
+         JOIN member m ON m.id = (SELECT member_id FROM membership WHERE code = t.member_code)
+         JOIN account acc ON acc.code = t.account_code;
 
+INSERT INTO transaction (collectivity_id, member_id, amount, payment_date, payment_mode, account_id, description)
+SELECT
+    c.id,
+    m.id,
+    t.amount,
+    t.payment_date::date,
+    t.payment_mode,
+    acc.id,
+    t.description
+FROM (VALUES
+          ('col-2', 'C2-M1', 60000,  '2026-01-01', 'CASH',         'C2-A-CASH',     'Paiement cotisation annuelle'),
+          ('col-2', 'C2-M2', 90000,  '2026-01-01', 'CASH',         'C2-A-CASH',     'Paiement cotisation annuelle'),
+          ('col-2', 'C2-M3', 100000, '2026-01-01', 'CASH',         'C2-A-CASH',     'Paiement cotisation annuelle'),
+          ('col-2', 'C2-M4', 100000, '2026-01-01', 'CASH',         'C2-A-CASH',     'Paiement cotisation annuelle'),
+          ('col-2', 'C2-M5', 100000, '2026-01-01', 'CASH',         'C2-A-CASH',     'Paiement cotisation annuelle'),
+          ('col-2', 'C2-M6', 100000, '2026-01-01', 'CASH',         'C2-A-CASH',     'Paiement cotisation annuelle'),
+          ('col-2', 'C2-M7', 40000,  '2026-01-01', 'MOBILE_MONEY', 'C2-A-MOBILE-1', 'Paiement cotisation annuelle'),
+          ('col-2', 'C2-M8', 60000,  '2026-01-01', 'MOBILE_MONEY', 'C2-A-MOBILE-1', 'Paiement cotisation annuelle')
+     ) AS t(collectivity_code, member_code, amount, payment_date, payment_mode, account_code, description)
+         JOIN collectivity c ON c.code = t.collectivity_code
+         JOIN member m ON m.id = (SELECT member_id FROM membership WHERE code = t.member_code)
+         JOIN account acc ON acc.code = t.account_code;
 -- =====================================================
 -- 10. ACCOUNT BALANCES (SOLDES DES COMPTES)
 -- =====================================================

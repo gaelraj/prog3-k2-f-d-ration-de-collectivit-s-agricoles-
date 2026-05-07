@@ -22,3 +22,26 @@ GET {{baseUrl}}/collectivities/col-1/statistics
 
 ### 6. Dates différentes
 GET {{baseUrl}}/collectivities/col-1/statistics?from=2026-06-01&to=2026-12-31
+
+### ====================================================
+### TEST STATISTIQUES GLOBALES (H) - v0.0.5
+### GET /collectivities/statistics
+### ====================================================
+
+### 1. GET /collectivities/statistics - Avec paramètres from et to
+GET {{baseUrl}}/collectivities/statistics?from=2026-01-01&to=2026-12-31
+
+### 2. GET /collectivities/statistics - Année complète
+GET {{baseUrl}}/collectivities/statistics?from=2026-01-01&to=2026-12-31
+
+### 3. GET /collectivities/statistics - Premier semestre 2026
+GET {{baseUrl}}/collectivities/statistics?from=2026-01-01&to=2026-06-30
+
+### 4. GET /collectivities/statistics - Deuxième semestre 2026
+GET {{baseUrl}}/collectivities/statistics?from=2026-07-01&to=2026-12-31
+
+### 5. GET /collectivities/statistics - Paramètres manquants (400)
+GET {{baseUrl}}/collectivities/statistics
+
+### 6. GET /collectivities/statistics - Période sans données
+GET {{baseUrl}}/collectivities/statistics?from=2025-01-01&to=2025-12-31

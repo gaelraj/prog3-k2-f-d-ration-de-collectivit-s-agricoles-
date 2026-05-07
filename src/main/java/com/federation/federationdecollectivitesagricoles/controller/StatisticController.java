@@ -21,16 +21,5 @@ public class StatisticController {
 
 
 
-    @GetMapping("/collectivities/statistics")
-    public ResponseEntity<?> getOverallStatistics(@RequestParam LocalDate from,
-                                                  @RequestParam LocalDate to) {
-        try {
-            List<CollectivityStatisticResponse> response =
-                    statisticService.getOverallStatistics(from, to);
 
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
 }

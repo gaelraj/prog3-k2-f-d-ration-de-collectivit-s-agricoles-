@@ -112,13 +112,18 @@ CREATE TABLE contribution (
 -- =====================================================
 CREATE TABLE account (
                          id SERIAL PRIMARY KEY,
+                         code varchar(250) NOT NULL UNIQUE,
                          collectivity_id INT NOT NULL REFERENCES collectivity(id),
                          account_type VARCHAR(50) NOT NULL,
                          holder_name VARCHAR(255) NOT NULL,
                          bank_name VARCHAR(100),
                          account_number VARCHAR(50),
+                         bank_code VARCHAR(5),
+                         branch_code VARCHAR(5),
+                         account_key VARCHAR(2),
                          mobile_service VARCHAR(50),
-                         phone_number VARCHAR(20)
+                         phone_number VARCHAR(20),
+                         initial_amount DECIMAL(15,2) DEFAULT 0
 );
 
 -- =====================================================
@@ -141,12 +146,13 @@ CREATE TABLE account_balance (
 -- =====================================================
 CREATE TABLE membership_fee (
                                 id SERIAL PRIMARY KEY,
+                                code VARCHAR(50) UNIQUE,
                                 collectivity_id INT NOT NULL REFERENCES collectivity(id),
-                                eligible_from DATE NOT NULL,
-                                frequency VARCHAR(50) NOT NULL,
-                                amount DECIMAL(15,2) NOT NULL,
                                 label VARCHAR(255),
-                                status VARCHAR(50) DEFAULT 'ACTIVE'
+                                status VARCHAR(50) DEFAULT 'ACTIVE',
+                                frequency VARCHAR(50) NOT NULL,
+                                eligible_from DATE NOT NULL,
+                                amount DECIMAL(15,2) NOT NULL
 );
 
 CREATE INDEX idx_membership_fee_collectivity ON membership_fee(collectivity_id);
@@ -161,6 +167,7 @@ CREATE TABLE transaction (
                              amount DECIMAL(15,2) NOT NULL,
                              payment_date DATE NOT NULL DEFAULT CURRENT_DATE,
                              payment_mode VARCHAR(50) NOT NULL,
+                             account_id INT REFERENCES account(id),  -- ← NOUVEAU
                              description TEXT
 );
 

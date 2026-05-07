@@ -1,6 +1,8 @@
 package com.federation.federationdecollectivitesagricoles.repository;
 
+import com.federation.federationdecollectivitesagricoles.dto.CollectivityInformation;
 import com.federation.federationdecollectivitesagricoles.dto.CollectivityLocalStatistics;
+import com.federation.federationdecollectivitesagricoles.dto.CollectivityOverallStatistics;
 import com.federation.federationdecollectivitesagricoles.dto.MemberDescription;
 import com.federation.federationdecollectivitesagricoles.dto.response.CollectivityStatisticResponse;
 import com.federation.federationdecollectivitesagricoles.dto.response.MemberDescriptionResponse;
@@ -284,4 +286,71 @@ public class StatisticRepository {
             throw new RuntimeException("Error finding overall statistics: " + e.getMessage(), e);
         }
     }
+
+    public List<CollectivityOverallStatistics> getOverallStatistics(LocalDate from, LocalDate to) {
+        String sql = """
+        SELECT 
+            c.id,
+            c.number,
+            c.name,
+            COUNT(DISTINCT CASE WHEN ms.membership_date BETWEEN ? AND ? THEN ms.member_id END) as new_members,
+            ROUND(
+                100.0 * COUNT(CASE WHEN paid.amount >= COALESCE(mf.total_fees, 0) THEN 1 END) / NULLIF(COUNT(*), 0), 
+                2
+            ) as percentage
+        FROM collectivity c
+        LEFT JOIN membership ms ON c.id = ms.collectivity_id AND ms.is_active = true
+        LEFT JOIN (
+            SELECT 
+                ms2.id as membership_id,
+                ms2.collectivity_id,
+                COALESCE(SUM(c2.amount), 0) as amount
+            FROM membership ms2
+            LEFT JOIN contribution c2 ON ms2.id = c2.membership_id
+            GROUP BY ms2.id, ms2.collectivity_id
+        ) paid ON ms.id = paid.membership_id
+        LEFT JOIN (
+            SELECT 
+                collectivity_id,
+                COALESCE(SUM(amount), 0) as total_fees
+            FROM membership_fee 
+            WHERE status = 'ACTIVE'
+            GROUP BY collectivity_id
+        ) mf ON c.id = mf.collectivity_id
+        GROUP BY c.id, c.number, c.name, mf.total_fees
+        """;
+
+        List<CollectivityOverallStatistics> statistics = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setObject(1, from);
+            ps.setObject(2, to);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CollectivityInformation info = new CollectivityInformation();
+                    info.setId(String.valueOf(rs.getLong("id")));
+                    info.setNumber(rs.getString("number"));
+                    info.setName(rs.getString("name"));
+
+                    CollectivityOverallStatistics stat = new CollectivityOverallStatistics();
+                    stat.setCollectivityInformation(info);
+                    stat.setNewMembersNumber(rs.getInt("new_members"));
+
+                    double percentage = rs.getDouble("percentage");
+                    stat.setOverallMemberCurrentDuePercentage(rs.wasNull() ? 0.0 : percentage);
+
+                    statistics.add(stat);
+                }
+            }
+
+            return statistics;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting overall statistics: " + e.getMessage(), e);
+        }
+    }
+
 }

@@ -15,12 +15,36 @@ select * from member;
 ALTER TABLE collectivity ALTER COLUMN agricultural_specialty DROP NOT NULL;
 
 
-SELECT * FROM collectivity;
-SELECT * FROM member;
-SELECT * FROM membership;
+
+
 SELECT * FROM position;
 SELECT * FROM mandate;
 SELECT * FROM sponsorship_relation;
 SELECT * FROM contribution;
-SELECT * FROM membership_fee
+SELECT * FROM membership_fee;
 
+SELECT
+    m.id,
+    m.first_name,
+    m.last_name,
+    COALESCE(SUM(c.amount), 0) as total_paid
+FROM member m
+         JOIN membership ms ON m.id = ms.member_id
+         LEFT JOIN contribution c ON ms.id = c.membership_id
+WHERE ms.collectivity_id = 1
+GROUP BY m.id, m.first_name, m.last_name
+ORDER BY m.id;
+
+SELECT * FROM collectivity;
+SELECT * FROM member;
+SELECT * FROM membership;
+SELECT * FROM sponsorship_relation;
+SELECT * FROM position;
+SELECT * FROM mandate;
+SELECT * FROM membership_fee;
+SELECT * FROM contribution;
+SELECT * FROM account;
+SELECT * FROM account_balance;
+SELECT * FROM transaction;
+
+delete from membership where id >= 25;

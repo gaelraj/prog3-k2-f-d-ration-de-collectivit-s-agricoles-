@@ -1,6 +1,7 @@
 package com.federation.federationdecollectivitesagricoles.controller;
 
 import com.federation.federationdecollectivitesagricoles.dto.CollectivityLocalStatistics;
+import com.federation.federationdecollectivitesagricoles.dto.CollectivityOverallStatistics;
 import com.federation.federationdecollectivitesagricoles.dto.request.CreateCollectivityRequest;
 import com.federation.federationdecollectivitesagricoles.dto.request.CreateMembershipFeeRequest;
 import com.federation.federationdecollectivitesagricoles.dto.request.IdentificationRequest;
@@ -118,6 +119,15 @@ public class CollectivityController {
             @RequestParam LocalDate to) {
 
         List<CollectivityLocalStatistics> statistics = collectivityService.getLocalStatistics(id, from, to);
+        return ResponseEntity.ok(statistics);
+    }
+
+    @GetMapping("/collectivities/statistics")
+    public ResponseEntity<?> getOverallStatistics(
+            @RequestParam LocalDate from,
+            @RequestParam LocalDate to) {
+
+        List<CollectivityOverallStatistics> statistics = collectivityService.getOverallStatistics(from, to);
         return ResponseEntity.ok(statistics);
     }
 

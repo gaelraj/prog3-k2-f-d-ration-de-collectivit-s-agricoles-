@@ -45,6 +45,10 @@ public class CollectivityService {
         this.statisticRepository = statisticRepository;
     }
 
+    public List<CollectivityOverallStatistics> getOverallStatistics(LocalDate from, LocalDate to) {
+        return statisticRepository.getOverallStatistics(from, to);
+    }
+
     public List<CollectivityResponse> createCollectivities(List<CreateCollectivityRequest> requests) {
         List<CollectivityResponse> responses = new ArrayList<>();
 
