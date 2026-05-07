@@ -1,0 +1,100 @@
+@baseUrl = http://localhost:8080
+
+
+### ============================================================
+### G - STATISTIQUES LOCALES D'UNE COLLECTIVITÉ
+### GET /collectivites/{id}/statistics
+### Montant encaissé par membre + montant impayé potentiel
+### ============================================================
+
+
+### G.1 - Statistiques locales de la collectivité 1
+GET {{baseUrl}}/collectivites/col-1/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+
+
+### G.2 - Statistiques locales de la collectivité 2
+GET {{baseUrl}}/collectivites/col-2/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+
+
+### G.3 - Statistiques locales de la collectivité 3
+GET {{baseUrl}}/collectivites/col-3/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+
+
+### G.4 - Statistiques locales de la collectivité 1 jusqu'à mai
+GET {{baseUrl}}/collectivites/col-1/statistics?from=2026-01-01&to=2026-05-31
+Accept: application/json
+
+
+### G.5 - Statistiques locales de la collectivité 3 jusqu'à mai
+GET {{baseUrl}}/collectivites/col-3/statistics?from=2026-04-01&to=2026-05-31
+Accept: application/json
+
+
+### G.6 - Collectivité inexistante : doit retourner 404
+GET {{baseUrl}}/collectivites/col-999/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+
+
+### G.7 - Période invalide : from après to, doit retourner 400
+GET {{baseUrl}}/collectivites/col-1/statistics?from=2026-05-31&to=2026-01-01
+Accept: application/json
+
+
+
+
+### ============================================================
+### H - STATISTIQUES GLOBALES DES COLLECTIVITÉS
+### GET /collectivites/statistics
+### Pourcentage membres à jour + nouveaux adhérents
+### ============================================================
+
+
+### H.1 - Statistiques globales de toutes les collectivités
+GET {{baseUrl}}/collectivites/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+
+
+### H.2 - Statistiques globales jusqu'à mai
+GET {{baseUrl}}/collectivites/statistics?from=2026-01-01&to=2026-05-31
+Accept: application/json
+
+
+### H.3 - Statistiques globales seulement en mars
+GET {{baseUrl}}/collectivites/statistics?from=2026-03-01&to=2026-03-31
+Accept: application/json
+
+
+### H.4 - Statistiques globales seulement en avril
+GET {{baseUrl}}/collectivites/statistics?from=2026-04-01&to=2026-04-30
+Accept: application/json
+
+
+### H.5 - Statistiques globales seulement en mai
+GET {{baseUrl}}/collectivites/statistics?from=2026-05-01&to=2026-05-31
+Accept: application/json
+
+
+### H.6 - Période invalide : doit retourner 400
+GET {{baseUrl}}/collectivites/statistics?from=2026-06-01&to=2026-01-01
+Accept: application/json
+
+
+
+
+### ============================================================
+### VARIANTE AVEC "collectivities"
+### À garder si ton controller accepte aussi /collectivities
+### ============================================================
+
+
+### Variante G - collectivity 1 avec /collectivities
+GET {{baseUrl}}/collectivities/col-1/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json
+
+
+### Variante H - statistiques globales avec /collectivities
+GET {{baseUrl}}/collectivities/statistics?from=2026-01-01&to=2026-04-30
+Accept: application/json

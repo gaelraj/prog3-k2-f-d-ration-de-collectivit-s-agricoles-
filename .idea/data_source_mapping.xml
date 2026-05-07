@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/src/main/resources/migration/1_create_member_table.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/migration/2_create_collectivity_table.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/migration/3_create_collectivity_member_table.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/migration/4_create_member_referee_table.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/migration/5_create_membership_fee.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/testdata/1_collectivity_testdata.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/testdata/2_member_testdata.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/testdata/3_membership_fee.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/testdata/insert_all_data.sql" value="2df22431-7e09-4ad2-b73c-521cb50c4195" />
+  </component>
+</project>
